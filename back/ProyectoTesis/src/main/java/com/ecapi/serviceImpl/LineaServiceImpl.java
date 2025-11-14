@@ -29,7 +29,6 @@ public class LineaServiceImpl implements LineaService {
 		List<Linea> lineas = lineaRepo.findAllByEstado(1);
 		
 		if (!lineas.isEmpty()) {
-			respuesta.put("mensaje", "Lineas disponibles encontradas");
 			respuesta.put("lineas", lineas);
 			
 			return ResponseEntity.status(HttpStatus.OK).body(respuesta);
