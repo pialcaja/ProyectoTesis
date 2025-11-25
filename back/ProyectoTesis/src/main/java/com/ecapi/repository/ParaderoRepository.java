@@ -1,7 +1,8 @@
 package com.ecapi.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.math.BigDecimal;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,13 +13,21 @@ import com.ecapi.model.Paradero;
 @Repository
 public interface ParaderoRepository extends JpaRepository<Paradero, Long> {
 
-	@Query("""
-			SELECT u FROM Paradero p
-			WHERE LOWER(p.nombre) LIKE LOWER(CONCAT('%', :filtro, '%'))
-			""")
-	Page<Paradero> buscarPorFiltro(@Param("filtro") String filtro, Pageable pageable);
+	Optional<Paradero> findByNombre(String nombre);
 	
-	boolean existsByNombreIgnoreCase(String nombre);
-	
-	boolean existsByNombreIgnoreCaseAndIdNot(String nombre, Long id);
+    @Query(value = """
+            SELECT *, 
+            (6371 * ACOS(
+                 COS(RADIANS(:lat)) 
+               * COS(RADIANS(lat)) 
+               * COS(RADIANS(lng) - RADIANS(:lng)) 
+               + SIN(RADIANS(:lat)) 
+               * SIN(RADIANS(lat))
+            )) AS distance
+            FROM tb_paradero
+            ORDER BY distance ASC
+            LIMIT 1
+            """, nativeQuery = true)
+        Paradero findParaderoCercano(@Param("lat") BigDecimal lat,
+                                     @Param("lng") BigDecimal lng);
 }
