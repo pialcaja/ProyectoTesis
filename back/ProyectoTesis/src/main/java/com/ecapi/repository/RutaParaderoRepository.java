@@ -10,9 +10,11 @@ import com.ecapi.model.RutaParadero;
 @Repository
 public interface RutaParaderoRepository extends JpaRepository<RutaParadero, Long> {
 
-    // TODOS LOS PARADEROS DE UNA RUTA EN UN SENTIDO
+    // Todos los paraderos de una ruta en un sentido
     List<RutaParadero> findByRutaIdAndSentidoOrderByOrdenAsc(Long rutaId, int sentido);
 
-    // BUSCAR POR UN PARADERO EN TODAS LAS RUTAS
+    // Buscar por un paradero en todas las rutas
     List<RutaParadero> findByParaderoId(Long paraderoId);
+
 }
+
