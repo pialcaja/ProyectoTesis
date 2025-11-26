@@ -1,7 +1,6 @@
 package com.ecapi.repository;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,21 +12,24 @@ import com.ecapi.model.Paradero;
 @Repository
 public interface ParaderoRepository extends JpaRepository<Paradero, Long> {
 
-	Optional<Paradero> findByNombre(String nombre);
-	
-    @Query(value = """
-            SELECT *, 
-            (6371 * ACOS(
-                 COS(RADIANS(:lat)) 
-               * COS(RADIANS(lat)) 
-               * COS(RADIANS(lng) - RADIANS(:lng)) 
-               + SIN(RADIANS(:lat)) 
-               * SIN(RADIANS(lat))
-            )) AS distance
-            FROM tb_paradero
-            ORDER BY distance ASC
-            LIMIT 1
-            """, nativeQuery = true)
-        Paradero findParaderoCercano(@Param("lat") BigDecimal lat,
-                                     @Param("lng") BigDecimal lng);
+	@Query(value = """
+			SELECT *, 
+			       (6371 * ACOS(
+			           COS(RADIANS(:lat)) * COS(RADIANS(lat)) *
+			           COS(RADIANS(lng) - RADIANS(:lng)) +
+			           SIN(RADIANS(:lat)) * SIN(RADIANS(lat))
+			       )) AS distancia
+			FROM tb_paradero
+			HAVING distancia <= :radioKm
+			ORDER BY distancia ASC
+			LIMIT 1
+			""", nativeQuery = true)
+			Paradero findParaderoCercanoEnRango(
+			        @Param("lat") BigDecimal lat,
+			        @Param("lng") BigDecimal lng,
+			        @Param("radioKm") double radioKm
+			);
+
 }
+
+
