@@ -1,0 +1,28 @@
+<div>
+  <h2>Consulta de Mejor Ruta</h2>
+
+  <label>Origen:</label>
+  <input [(ngModel)]="origen" placeholder="Ingresa origen">
+
+  <label>Destino:</label>
+  <input [(ngModel)]="destino" placeholder="Ingresa destino">
+
+  <button (click)="buscar()">Buscar Ruta</button>
+</div>
+
+<div *ngIf="resultado">
+  <h3>{{ resultado.mensaje }}</h3>
+  <p>Ruta: {{ resultado.rutaNombre }}</p>
+  <p>Origen: {{ resultado?.origen?.nombre }}</p>
+  <p>Destino: {{ resultado?.destino?.nombre }}</p>
+
+  <h4>Paraderos en la mejor ruta:</h4>
+  <ul>
+    <li *ngFor="let p of resultado.paraderosRuta">
+      {{ p.nombre }} ({{ p.lat }}, {{ p.lng }})
+    </li>
+  </ul>
+</div>
+
+<!-- Contenedor del mapa -->
+<div #mapContainer style="width: 100%; height: 500px; margin-top: 20px;"></div>
