@@ -1,0 +1,26 @@
+<nav class="navbar">
+  <a routerLink="/">Inicio</a>
+
+  <div class="spacer"></div>
+
+  <ng-container *ngIf="isLoggedIn">
+    <span>{{ username }}</span>
+
+    <!-- Si es ADMIN -->
+    <a *ngIf="authService.hasRole('ADMIN')" routerLink="/admin">
+      Panel Admin
+    </a>
+
+    <!-- Si es CLIENTE -->
+    <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/buscar">
+      Buscar rutas
+    </a>
+
+    <button (click)="logout()">Cerrar sesión</button>
+  </ng-container>
+
+  <ng-container *ngIf="!isLoggedIn">
+    <a routerLink="/login">Login</a>
+    <a routerLink="/register">Registro</a>
+  </ng-container>
+</nav>

@@ -2,14 +2,24 @@
   <h2>Consulta de Mejor Ruta</h2>
 
   <label>Origen:</label>
-  <input [(ngModel)]="origen" placeholder="Ingresa origen">
+  <input #origenInput placeholder="Ingresa origen" />
+  <button (click)="usarUbicacionActual()">Usar mi ubicación</button>
+  <button *ngIf="usandoUbicacionActual" (click)="dejarDeUsarUbicacion()">
+    Dejar de usar ubicación
+  </button>
 
   <label>Destino:</label>
-  <input [(ngModel)]="destino" placeholder="Ingresa destino">
+  <input #destinoInput placeholder="Ingresa destino" />
 
   <button (click)="buscar()">Buscar Ruta</button>
+
+  <ng-container *ngIf="isLoggedIn">
+    <span>{{ username }}</span>
+    <button (click)="logout()">Cerrar sesión</button>
+  </ng-container>
 </div>
 
+<!-- 
 <div *ngIf="resultado">
   <h3>{{ resultado.mensaje }}</h3>
   <p>Ruta: {{ resultado.rutaNombre }}</p>
@@ -23,6 +33,7 @@
     </li>
   </ul>
 </div>
+ -->
 
 <!-- Contenedor del mapa -->
 <div #mapContainer style="width: 100%; height: 500px; margin-top: 20px;"></div>
