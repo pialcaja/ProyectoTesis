@@ -25,4 +25,18 @@ export class GeocodingService {
       })
     );
   }
+
+  reverseGeocode(lat: number, lng: number): Promise<string> {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${this.apiKey}`;
+
+    return fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'OK' && data.results.length > 0) {
+          return data.results[0].formatted_address;
+        }
+        throw new Error('No se encontró la dirección.');
+      });
+  }
+
 }
