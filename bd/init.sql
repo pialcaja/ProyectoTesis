@@ -5,6 +5,34 @@ use appTransporte;
 -- =========================================
 -- TABLAS
 -- =========================================
+-- TARJETA_BUS
+create table tb_tarjeta_bus(
+	id int auto_increment primary key,
+    num_tarjeta char(16) unique not null,
+    saldo decimal(10,2) not null,
+    estado int not null
+);
+-- ROL
+create table tb_rol(
+	id int auto_increment primary key,
+    nombre varchar(50) unique not null,
+    estado int not null
+);
+-- USUARIO
+create table tb_usuario(
+	id int auto_increment primary key,
+    nombre varchar(50) not null,
+    apepa varchar(50) not null,
+    apema varchar(50) not null,
+    dni char(8) unique not null,
+    email varchar(100) unique not null,
+    pwd varchar(100) not null,
+    estado int not null,
+    id_tarjeta int null,
+    id_rol int not null,
+    constraint fk_usuario_tarjeta_bus foreign key (id_tarjeta) references tb_tarjeta_bus (id),
+    constraint fk_usuario_rol foreign key (id_rol) references tb_rol (id)
+);
 -- LINEA
 create table tb_linea(
 	id int auto_increment primary key,
