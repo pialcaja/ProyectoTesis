@@ -71,6 +71,15 @@ create table tb_ruta_paradero(
 -- =========================================
 -- INSERTS
 -- =========================================
+-- ROL
+insert into tb_rol (nombre, estado) values
+('ADMIN', 1),
+('CLIENTE', 2);
+
+-- USUARIO
+insert into tb_usuario (nombre, apepa, apema, dni, email, pwd, estado, id_tarjeta, id_rol) values 
+('Piero', 'Caro', 'Jara', '98765432', 'piero@ejemplo.com', '$2a$10$8mo3AYs6oYvYRxWtPiw8m.L0x/m1WRLI8SZdenHWS0YmE5pJXXqjW', 1, null, 1);
+
 -- LINEAS
 insert into tb_linea (nombre, estado) values
 ('Corredor azul', 1),
@@ -85,9 +94,7 @@ insert into tb_ruta (nombre, estado, id_linea) values
 ('336', 1, 1),
 ('370', 1, 1);
 
--- =========================================
 -- PARADEROS - SENTIDO IDA (RÍMAC → BARRANCO)
--- =========================================
 insert into tb_paradero (nombre, lat, lng, estado, sentido) values
 ('24 de Junio', -12.016510423140467, -77.02980180840994, 1, 1),
 ('Suarez', -12.017079708034746, -77.030951134936, 1, 1),
@@ -135,9 +142,7 @@ insert into tb_paradero (nombre, lat, lng, estado, sentido) values
 ('Balta', -12.141857720012606, -77.0185536634698, 1, 1),
 ('Plaza Butters', -12.143751344343038, -77.01584009149282, 1, 1);
 
--- =========================================
 -- PARADEROS - SENTIDO VUELTA (BARRANCO → RÍMAC)
--- =========================================
 insert into tb_paradero (nombre, lat, lng, estado, sentido) values
 ('El Sol', -12.13887812865224, -77.01747924794698, 1, 2),
 ('Chipoco', -12.138066397459525, -77.02233929358415, 1, 2),
