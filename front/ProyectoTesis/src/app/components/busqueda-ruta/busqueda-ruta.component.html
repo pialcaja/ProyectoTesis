@@ -1,0 +1,38 @@
+<app-navbar></app-navbar>
+
+<section class="ruta-container">
+
+  <!-- COLUMNA DEL FORMULARIO -->
+  <div class="form-card">
+
+    <h2>Encuentra la mejor ruta</h2>
+
+    <label>Origen:</label>
+    <input #origenInput type="text" placeholder="Ingresa la ubicación de origen" />
+
+    <button class="btn-secondary" (click)="usarUbicacionActual()">
+      Usar mi ubicación
+    </button>
+
+    <button
+      class="btn-warning"
+      *ngIf="usandoUbicacionActual"
+      (click)="dejarDeUsarUbicacion()">
+      Dejar de usar ubicación
+    </button>
+
+    <label>Destino:</label>
+    <input #destinoInput type="text" placeholder="Ingresa la ubicación de destino" />
+
+    <button class="btn-primary" (click)="buscar()">
+      Buscar Ruta
+    </button>
+
+  </div>
+
+  <!-- COLUMNA DEL MAPA -->
+  <div class="map-wrapper">
+    <div #mapContainer id="map"></div>
+  </div>
+
+</section>

@@ -1,0 +1,55 @@
+<nav class="navbar">
+
+  <!-- Logo -->
+  <a routerLink="/" class="logo">MiApp</a>
+
+  <!-- Botón hamburguesa -->
+  <div class="hamburger" (click)="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <!-- LINKS NAVBAR -->
+  <div class="navbar-links" [class.active]="menuOpen">
+
+    <a routerLink="/">Inicio</a>
+    <a routerLink="/nosotros">Nosotros</a>
+    <a routerLink="/contacto">Contacto</a>
+
+    
+    <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/buscar">Ruta</a>
+
+    <!-- Dropdown TARJETA -->
+    <div class="dropdown" *ngIf="authService.hasRole('CLIENTE')">
+      <span class="dropdown-btn">Tarjeta</span>
+
+      <div class="dropdown-content">
+        <a routerLink="/">Tarjeta de pago</a>
+        <a routerLink="/">Lima Pass</a>
+        <a routerLink="/">Consultar saldo</a>
+        <a routerLink="/">Recargar Lima Pass</a>
+        <a routerLink="/">Pagar pasaje</a>
+      </div>
+    </div>
+
+    <!-- Dropdown USUARIO -->
+    <ng-container *ngIf="isLoggedIn">
+      <div class="dropdown">
+        <span class="dropdown-btn">{{ username }}</span>
+
+        <div class="dropdown-content">
+          <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/">Actualizar datos</a>
+          <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/">Consultar transacciones</a>
+
+          <a (click)="logout()">Cerrar sesión</a>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- No logueado -->
+    <a *ngIf="!isLoggedIn" routerLink="/login">Ingresar</a>
+
+  </div>
+
+</nav>

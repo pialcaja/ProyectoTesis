@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
   standalone: true,
   selector: 'app-login',
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css'],
   imports: [CommonModule, FormsModule]
 })
 export class LoginComponent {
@@ -29,11 +30,15 @@ export class LoginComponent {
         if (role === 'ADMIN') {
           this.router.navigate(['/admin']);
         } else {
-          this.router.navigate(['/buscar']);
+          this.router.navigate(['/home']);
         }
       },
       error: () => this.errorMsg = 'Credenciales inválidas'
     });
   }
 
+  goToRegister() {
+    this.router.navigate(['/register']);
+  }
 }
+

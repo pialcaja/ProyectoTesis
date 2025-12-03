@@ -1,0 +1,75 @@
+.hero-container {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    min-height: 380px;
+    max-height: 650px;
+    overflow: hidden;
+}
+
+/* ---- EFECTO FADE ---- */
+.hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    /* transición del fade */
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Capa oscura */
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        rgba(0, 0, 0, 0.45),
+        rgba(0, 0, 0, 0.55)
+    );
+}
+
+/* ---- TEXTO EN ESQUINA INFERIOR IZQUIERDA ---- */
+.hero-text {
+    position: absolute;
+    color: white;
+    z-index: 10;
+    padding: 25px;
+}
+
+.bottom-left {
+    left: 0;
+    bottom: 0;
+    text-align: left;
+}
+
+.hero-text h1 {
+    font-size: 2.6rem;
+    margin: 0;
+    font-weight: bold;
+}
+
+.hero-text p {
+    font-size: 1.2rem;
+    margin-top: 8px;
+    opacity: 0.9;
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 768px) {
+    .hero-text {
+        padding: 15px;
+    }
+
+    .hero-text h1 {
+        font-size: 1.9rem;
+    }
+
+    .hero-text p {
+        font-size: 1rem;
+    }
+}

@@ -1,0 +1,124 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+    z-index: 100;
+}
+
+.logo {
+    font-size: 20pt;
+    font-weight: bold;
+    color: #333;
+    text-decoration: none;
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.navbar-links a,
+.dropdown-btn {
+    font-size: 15pt;
+    color: black;
+    text-decoration: none;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    cursor: pointer;
+}
+
+.dropdown-btn {
+    display: inline-block;
+    padding: 10px 10px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    min-width: 200px;
+    z-index: 30;
+    padding-top: 4px;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 10px;
+}
+
+.dropdown-content a:hover {
+    background-color: #ececec;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 4px;
+}
+
+.hamburger span {
+    width: 28px;
+    height: 3px;
+    background: black;
+    border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+
+    .hamburger {
+        display: flex;
+    }
+
+    .navbar-links {
+        position: absolute;
+        top: 60px;
+        right: -100%;
+        width: 260px;
+        background: white;
+        padding: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        box-shadow: -2px 4px 10px rgba(0,0,0,0.25);
+        transition: right 0.3s ease;
+        z-index: 40;
+    }
+
+    .navbar-links.active {
+        right: 0;
+    }
+
+    .dropdown-content {
+        position: relative;
+        top: 0;
+        right: 0;
+        border: none;
+        background: transparent;
+        padding-left: 10px;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .dropdown-content a {
+        background: none;
+        padding-left: 5px;
+    }
+}
