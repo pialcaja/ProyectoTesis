@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { AuthService } from "../services/auth.service";
+import { AuthService } from "../../services/auth.service";
 import { CommonModule } from "@angular/common";
 
 @Component({
@@ -8,7 +8,7 @@ import { CommonModule } from "@angular/common";
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule   // ← NECESARIO
+    ReactiveFormsModule
   ],
   templateUrl: './register.component.html'
 })

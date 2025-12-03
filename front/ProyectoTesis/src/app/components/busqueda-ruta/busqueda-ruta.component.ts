@@ -1,17 +1,19 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BusquedaRutaService } from '../services/busqueda-ruta.service';
-import { MapLoaderService } from '../services/map-loader.service';
-import { MejorRutaResponseDTO } from '../models/mejor-ruta-response.dto';
-import { GeocodingService } from '../services/geocoding.service';
-import { AuthService } from '../services/auth.service';
+import { BusquedaRutaService } from '../../services/busqueda-ruta.service';
+import { MapLoaderService } from '../../services/map-loader.service';
+import { MejorRutaResponseDTO } from '../../models/mejor-ruta-response.dto';
+import { GeocodingService } from '../../services/geocoding.service';
+import { AuthService } from '../../services/auth.service';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-busqueda-ruta',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NavbarComponent],
   templateUrl: './busqueda-ruta.component.html',
+  styleUrl: './busqueda-ruta.component.css',
 })
 export class BusquedaRutaComponent implements AfterViewInit {
 
