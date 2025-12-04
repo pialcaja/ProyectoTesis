@@ -1,11 +1,40 @@
-<h2>Registro</h2>
+<div class="register-container">
 
-<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="register-card">
 
-  <input formControlName="nombre" placeholder="Nombre">
-  <input formControlName="email" placeholder="Email">
-  <input type="password" formControlName="password" placeholder="Contraseña">
+    <h2 class="title">Crear cuenta</h2>
 
-  <button type="submit">Registrar</button>
+    <form [formGroup]="form" (ngSubmit)="submit()">
 
-</form>
+      <label>Nombre:</label>
+      <input formControlName="nombre" placeholder="Nombre">
+
+      <label>Apellido paterno:</label>
+      <input formControlName="apepa" placeholder="Apellido paterno">
+
+      <label>Apellido materno:</label>
+      <input formControlName="apema" placeholder="Apellido materno">
+
+      <label>DNI:</label>
+      <input formControlName="dni" placeholder="Número de documento">
+
+      <label>Email:</label>
+      <input formControlName="email" placeholder="Correo electrónico">
+
+      <label>Contraseña:</label>
+      <input type="password" formControlName="pwd" placeholder="Contraseña">
+
+      <button type="submit" class="btn-register">
+        Registrarme
+      </button>
+
+      <p class="login-link">
+        ¿Ya tienes una cuenta?
+        <a (click)="goToLogin()">Inicia sesión</a>
+      </p>
+
+    </form>
+
+  </div>
+
+</div>
