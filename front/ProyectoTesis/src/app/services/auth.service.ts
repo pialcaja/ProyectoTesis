@@ -30,7 +30,6 @@ export class AuthService {
   }
 
   saveLoginData(resp: any) {
-    // según tu JSON real
     localStorage.setItem(this.ACCESS_TOKEN, resp.token);
     localStorage.setItem(this.REFRESH_TOKEN, resp.refreshToken);
     localStorage.setItem(this.USERID, resp.id.toString());

@@ -1,0 +1,138 @@
+/* --- CONTENEDOR PRINCIPAL --- */
+.register-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(135deg, #4b79a1, #283e51);
+  padding: 20px;
+}
+
+/* --- TARJETA --- */
+.register-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  padding: 35px 40px;
+  border-radius: 15px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* --- TÍTULO --- */
+.title {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 26px;
+  font-weight: bold;
+  color: #222;
+}
+
+/* --- INPUTS --- */
+form label {
+  font-weight: 600;
+  margin-top: 10px;
+  color: #333;
+  display: block;
+}
+
+form input {
+  width: 94%;
+  padding: 12px;
+  margin-top: 6px;
+  border: 1.5px solid #bbb;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: 0.25s;
+}
+
+form input:focus {
+  border-color: #4b79a1;
+  box-shadow: 0 0 6px rgba(75,121,161,0.4);
+  outline: none;
+}
+
+/* --- BOTÓN REGISTRAR --- */
+.btn-register {
+  width: 100%;
+  margin-top: 22px;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  background: #4b79a1;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.25s;
+  font-weight: bold;
+}
+
+.btn-register:hover {
+  background: #3a5c7b;
+}
+
+/* --- ENLACE HACIA LOGIN --- */
+.login-link {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 14px;
+}
+
+.login-link a {
+  color: #4b79a1;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* --- ANIMACIÓN --- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 480px) {
+  .register-card {
+    padding: 28px 26px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  form input {
+    font-size: 14px;
+  }
+
+  .btn-register {
+    padding: 10px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 360px) {
+  .register-card {
+    padding: 22px 20px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  form input {
+    padding: 10px;
+  }
+}

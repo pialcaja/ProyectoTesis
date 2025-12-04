@@ -16,7 +16,9 @@ export class NavbarComponent implements OnInit {
   username = '';
   menuOpen = false;
 
-  constructor(public authService: AuthService) {}
+  dropdownOpen: string | null = null;
+
+  constructor(public authService: AuthService) { }
 
   ngOnInit(): void {
     this.authService.isLoggedIn$.subscribe(status => {
@@ -27,6 +29,10 @@ export class NavbarComponent implements OnInit {
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
+  }
+
+  toggleDropdown(name: string) {
+    this.dropdownOpen = this.dropdownOpen === name ? null : name;
   }
 
   logout() {
