@@ -67,6 +67,30 @@ create table tb_ruta_paradero(
     constraint fk_rp_ruta foreign key (id_ruta) references tb_ruta(id),
     constraint fk_rp_paradero foreign key (id_paradero) references tb_paradero(id)
 );
+-- MEDIO_PAGO
+create table tb_medio_pago(
+    id int auto_increment primary key,
+    tipo varchar(50) not null,
+    descripcion varchar(100) not null,
+    numero_enmascarado varchar(20) not null,
+    estado int not null,
+    id_usuario int not null,
+    constraint fk_medio_pago_usuario foreign key (id_usuario) references tb_usuario(id)
+);
+-- TRANSACCION
+create table tb_transaccion(
+    id int auto_increment primary key,
+    tipo varchar(50) not null,
+    monto decimal(10,2) not null,
+    fecha datetime not null,
+    estado varchar(20) not null,
+    id_usuario int not null,
+    id_tarjeta int not null,
+    id_medio_pago int null,
+    constraint fk_transaccion_usuario foreign key (id_usuario) references tb_usuario(id),
+    constraint fk_transaccion_tarjeta foreign key (id_tarjeta) references tb_tarjeta_bus(id),
+    constraint fk_transaccion_medio_pago foreign key (id_medio_pago) references tb_medio_pago(id)
+);
 
 -- =========================================
 -- INSERTS
@@ -79,6 +103,14 @@ insert into tb_rol (nombre, estado) values
 -- USUARIO
 insert into tb_usuario (nombre, apepa, apema, dni, email, pwd, estado, id_tarjeta, id_rol) values 
 ('Piero', 'Caro', 'Jara', '98765432', 'piero@ejemplo.com', '$2a$10$8mo3AYs6oYvYRxWtPiw8m.L0x/m1WRLI8SZdenHWS0YmE5pJXXqjW', 1, null, 1);
+
+-- TARJETAS DE PRUEBA
+insert into tb_tarjeta_bus (num_tarjeta, saldo, estado) values
+('1234567890123456', 50.00, 1),
+('9876543210987654', 100.00, 1);
+
+-- MEDIOS DE PAGO DE PRUEBA (para usuarios que se registren)
+-- Estos se insertarán después cuando se creen usuarios clientes de prueba
 
 -- LINEAS
 insert into tb_linea (nombre, estado) values

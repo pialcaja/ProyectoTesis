@@ -6,6 +6,8 @@ import { BusquedaRutaComponent } from './components/busqueda-ruta/busqueda-ruta.
 import { authGuard } from './guards/auth.guard';
 import { HomeComponent } from './components/home/home.component';
 import { RegisterComponent } from './components/register/register.component';
+import { ConsultarSaldoComponent } from './components/consultar-saldo/consultar-saldo.component';
+import { RecargarTarjetaComponent } from './components/recargar-tarjeta/recargar-tarjeta.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -13,6 +15,10 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   
   { path: 'buscar', component: BusquedaRutaComponent, canActivate: [ClienteGuard] },
+
+  { path: 'consultar-saldo', component: ConsultarSaldoComponent, canActivate: [ClienteGuard] },
+
+  { path: 'recargar-tarjeta', component: RecargarTarjetaComponent, canActivate: [ClienteGuard] },
 
   { path: 'admin', component: AdminViewComponent, canActivate: [AdminGuard] },
 

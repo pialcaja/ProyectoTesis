@@ -1,0 +1,150 @@
+<div class="recarga-bg">
+  <div class="recarga-container fade-in">
+
+    <div class="recarga-card">
+      <h2>Recargar Tarjeta</h2>
+
+      <!-- Loading inicial -->
+      <div *ngIf="loadingData" class="loading-message">
+        <p>Cargando información...</p>
+      </div>
+
+      <!-- Error sin tarjeta o sin medios de pago -->
+      <div *ngIf="errorMsg && !loadingData && (sinTarjeta || sinMediosPago)" class="error-container">
+        <p class="error">{{ errorMsg }}</p>
+        <button class="btn-secondary" (click)="irAConsultar()">Volver</button>
+      </div>
+
+      <!-- Formulario de recarga -->
+      <div *ngIf="!loadingData && !sinTarjeta && !sinMediosPago && !recargaExitosa && !mostrarConfirmacion">
+        
+        <!-- Información de la tarjeta -->
+        <div class="tarjeta-info" *ngIf="tarjeta">
+          <h3>Su Tarjeta</h3>
+          <div class="info-row">
+            <span>Número:</span>
+            <span>{{ tarjeta.numTarjeta }}</span>
+          </div>
+          <div class="info-row">
+            <span>Saldo Actual:</span>
+            <span class="saldo-actual">S/ {{ tarjeta.saldo.toFixed(2) }}</span>
+          </div>
+        </div>
+
+        <!-- Selección de monto -->
+        <div class="seccion-monto">
+          <h3>Seleccione el monto a recargar</h3>
+          <div class="montos-grid">
+            <button 
+              *ngFor="let monto of montos" 
+              class="btn-monto"
+              [class.seleccionado]="montoSeleccionado === monto"
+              (click)="seleccionarMonto(monto)">
+              S/ {{ monto }}
+            </button>
+          </div>
+          
+          <div class="monto-personalizado">
+            <label>O ingrese un monto personalizado:</label>
+            <div class="input-group">
+              <span class="prefix">S/</span>
+              <input 
+                type="number" 
+                [(ngModel)]="montoPersonalizado"
+                (change)="usarMontoPersonalizado()"
+                placeholder="Ingrese monto"
+                min="1"
+                max="500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Selección de medio de pago -->
+        <div class="seccion-medio-pago">
+          <h3>Seleccione un medio de pago</h3>
+          <div class="medios-pago-lista">
+            <div 
+              *ngFor="let medio of mediosPago" 
+              class="medio-pago-item"
+              [class.seleccionado]="medioPagoSeleccionado === medio.id"
+              (click)="seleccionarMedioPago(medio.id)">
+              <div class="medio-icon">
+                <span *ngIf="medio.tipo === 'TARJETA'">💳</span>
+                <span *ngIf="medio.tipo === 'YAPE'">📱</span>
+                <span *ngIf="medio.tipo === 'PLIN'">📱</span>
+              </div>
+              <div class="medio-info">
+                <div class="medio-tipo">{{ medio.tipo }}</div>
+                <div class="medio-descripcion">{{ medio.descripcion }}</div>
+                <div class="medio-numero">{{ medio.numeroEnmascarado }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p *ngIf="errorMsg" class="error">{{ errorMsg }}</p>
+
+        <button class="btn-primary" (click)="validarYMostrarConfirmacion()">
+          Continuar
+        </button>
+      </div>
+
+      <!-- Modal de confirmación -->
+      <div *ngIf="mostrarConfirmacion && !loading" class="confirmacion-modal">
+        <h3>Confirmar Recarga</h3>
+        <div class="confirmacion-detalle">
+          <div class="detalle-row">
+            <span>Monto a recargar:</span>
+            <span class="valor-destacado">S/ {{ montoSeleccionado?.toFixed(2) }}</span>
+          </div>
+          <div class="detalle-row">
+            <span>Medio de pago:</span>
+            <span>{{ getMedioPagoDescripcion(medioPagoSeleccionado!) }}</span>
+          </div>
+          <div class="detalle-row">
+            <span>Saldo actual:</span>
+            <span>S/ {{ tarjeta?.saldo.toFixed(2) }}</span>
+          </div>
+          <div class="detalle-row destacado">
+            <span>Nuevo saldo:</span>
+            <span class="valor-destacado">S/ {{ ((tarjeta?.saldo || 0) + (montoSeleccionado || 0)).toFixed(2) }}</span>
+          </div>
+        </div>
+        
+        <div class="confirmacion-acciones">
+          <button class="btn-confirmar" (click)="confirmarRecarga()">Confirmar Recarga</button>
+          <button class="btn-cancelar" (click)="cancelarRecarga()">Cancelar</button>
+        </div>
+      </div>
+
+      <!-- Loading durante procesamiento -->
+      <div *ngIf="loading" class="loading-message">
+        <p>Procesando pago...</p>
+      </div>
+
+      <!-- Resultado exitoso -->
+      <div *ngIf="recargaExitosa" class="resultado-exitoso">
+        <div class="exito-icon">✓</div>
+        <h3>{{ successMsg }}</h3>
+        <div class="exito-detalle">
+          <div class="detalle-row">
+            <span>Monto recargado:</span>
+            <span class="valor-destacado">S/ {{ montoSeleccionado?.toFixed(2) }}</span>
+          </div>
+          <div class="detalle-row destacado">
+            <span>Nuevo Saldo:</span>
+            <span class="saldo-nuevo">S/ {{ nuevoSaldo.toFixed(2) }}</span>
+          </div>
+        </div>
+        
+        <div class="acciones">
+          <button class="btn-primary" (click)="nuevaRecarga()">Nueva Recarga</button>
+          <button class="btn-secondary" (click)="irAConsultar()">Ver Saldo</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
