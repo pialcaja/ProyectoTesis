@@ -1,0 +1,48 @@
+<div class="saldo-bg">
+  <div class="saldo-container fade-in">
+
+    <div class="saldo-card">
+      <h2>Consultar Saldo</h2>
+
+      <div *ngIf="loading" class="loading-message">
+        <p>Cargando información de su tarjeta...</p>
+      </div>
+
+      <div *ngIf="errorMsg && !loading" class="error-container">
+        <p class="error">{{ errorMsg }}</p>
+        <button class="btn-secondary" (click)="consultarSaldo()">Reintentar</button>
+      </div>
+
+      <div *ngIf="tarjeta && !loading" class="resultado-saldo">
+        <div class="saldo-info">
+          <h3>Información de su Tarjeta</h3>
+          <div class="info-row">
+            <span class="label">Número de Tarjeta:</span>
+            <span class="value">{{ tarjeta.numTarjeta }}</span>
+          </div>
+          <div class="info-row saldo-highlight">
+            <span class="label">Saldo Disponible:</span>
+            <span class="value">S/ {{ tarjeta.saldo.toFixed(2) }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Estado:</span>
+            <span class="value" [class.activa]="tarjeta.estado === 1" [class.inactiva]="tarjeta.estado === 0">
+              {{ tarjeta.estado === 1 ? 'Activa' : 'Inactiva' }}
+            </span>
+          </div>
+          <div class="info-row">
+            <span class="label">Última Actualización:</span>
+            <span class="value">{{ formatearFecha(tarjeta.fechaActualizacion) }}</span>
+          </div>
+        </div>
+
+        <div class="acciones">
+          <button class="btn-recargar" (click)="irARecargar()">Recargar Tarjeta</button>
+          <button class="btn-secondary" (click)="consultarSaldo()">Actualizar</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
