@@ -1,3 +1,4 @@
+<app-navbar></app-navbar>
 <div class="recarga-bg">
   <div class="recarga-container fade-in">
 
@@ -104,7 +105,7 @@
           </div>
           <div class="detalle-row">
             <span>Saldo actual:</span>
-            <span>S/ {{ tarjeta?.saldo.toFixed(2) }}</span>
+            <span>S/ {{ tarjeta?.saldo?.toFixed(2) || '0.00' }}</span>
           </div>
           <div class="detalle-row destacado">
             <span>Nuevo saldo:</span>

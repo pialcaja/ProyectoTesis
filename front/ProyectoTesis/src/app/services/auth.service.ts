@@ -63,9 +63,21 @@ export class AuthService {
     return localStorage.getItem(this.ROLE) || '';
   }
 
-  hasRole(role: string): boolean {
-    return this.getRole() === role;
+hasRole(role: string): boolean {
+  const storedRole = this.getRole();
+
+  if (!storedRole) return false;
+
+  // Si es array de roles
+  if (storedRole.includes(',')) {
+    const roles = storedRole.split(',').map(r => r.replace('ROLE_', '').trim().toUpperCase());
+    return roles.includes(role.toUpperCase());
   }
+
+  // Si es un solo rol
+  return storedRole.replace('ROLE_', '').toUpperCase() === role.toUpperCase();
+}
+
 
   isLogged(): boolean {
     return this.hasToken();
