@@ -1,17 +1,16 @@
 .navbar {
+    background: linear-gradient(135deg, #4b79a1, #283e51);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 12px 20px;
-    background: white;
-    border-bottom: 1px solid #ddd;
     z-index: 100;
 }
 
 .logo {
     font-size: 20pt;
     font-weight: bold;
-    color: #333;
+    color: white;
     text-decoration: none;
 }
 
@@ -24,7 +23,7 @@
 .navbar-links a,
 .dropdown-btn {
     font-size: 15pt;
-    color: black;
+    color: white;
     text-decoration: none;
     padding: 6px 10px;
     cursor: pointer;
@@ -45,7 +44,7 @@
     position: absolute;
     top: 100%;
     right: 0;
-    background: white;
+    background: linear-gradient(135deg, #4b79a1, #283e51);
     border: 1px solid #ccc;
     min-width: 200px;
     z-index: 30;
@@ -62,7 +61,7 @@
 }
 
 .dropdown-content a:hover {
-    background-color: #ececec;
+    background-color: #4b79a1;
 }
 
 .hamburger {
@@ -75,7 +74,7 @@
 .hamburger span {
     width: 28px;
     height: 3px;
-    background: black;
+    background: white;
     border-radius: 5px;
 }
 
@@ -90,7 +89,7 @@
         top: 60px;
         right: -100%;
         width: 260px;
-        background: white;
+        background-color: #4b79a1;;
         padding: 15px;
         flex-direction: column;
         align-items: flex-start;
@@ -106,7 +105,7 @@
 
     .dropdown-content {
         display: none !important;
-        background: white;
+        background-color: #4b79a1;
         border: 1px solid #ccc;
         padding-left: 0;
         position: relative;

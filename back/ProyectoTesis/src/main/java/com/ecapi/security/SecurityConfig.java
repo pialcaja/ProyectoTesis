@@ -52,6 +52,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/busqueda/**").hasRole("CLIENTE")
+                        .requestMatchers("/tarjeta/**").hasRole("CLIENTE")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess ->

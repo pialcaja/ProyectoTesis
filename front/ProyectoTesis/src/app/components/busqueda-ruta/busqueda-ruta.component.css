@@ -1,5 +1,6 @@
 /* ===== CONTENEDOR GENERAL ===== */
 .ruta-container {
+    background: linear-gradient(135deg, #4b79a1, #283e51);
     display: flex;
     flex-direction: column;
     gap: 20px;

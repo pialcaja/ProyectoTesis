@@ -18,6 +18,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
+        console.log("📩 Interceptando:", req.url);
+
         const accessToken = this.authService.getAccessToken();
         let authReq = req;
 
@@ -25,10 +27,14 @@ export class AuthInterceptor implements HttpInterceptor {
             authReq = req.clone({
                 setHeaders: { Authorization: `Bearer ${accessToken}` }
             });
+            console.log("🔐 Usando Access Token:", accessToken.substring(0, 15) + "...");
         }
 
         return next.handle(authReq).pipe(
             catchError((error: HttpErrorResponse) => {
+
+                console.log("⚠️ ERROR INTERCEPTADO:", error);
+
 
                 if (error.status === 401 && !this.isRefreshing) {
 

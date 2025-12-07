@@ -102,15 +102,21 @@ insert into tb_rol (nombre, estado) values
 
 -- USUARIO
 insert into tb_usuario (nombre, apepa, apema, dni, email, pwd, estado, id_tarjeta, id_rol) values 
-('Piero', 'Caro', 'Jara', '98765432', 'piero@ejemplo.com', '$2a$10$8mo3AYs6oYvYRxWtPiw8m.L0x/m1WRLI8SZdenHWS0YmE5pJXXqjW', 1, null, 1);
+('Piero', 'Caro', 'Jara', '98765432', 'piero@ejemplo.com', '$2a$10$8mo3AYs6oYvYRxWtPiw8m.L0x/m1WRLI8SZdenHWS0YmE5pJXXqjW', 1, null, 1),
+('Jennifer', 'Gutierrez', 'Marquez', '12312312', 'jennifer@ejemplo.com', '$2a$10$qXLyPItdgayHh4S9TP3mReoXaNgtKXYXwcL1CVXsFqY0oynrvLDIa', 1, null, 2);
 
 -- TARJETAS DE PRUEBA
 insert into tb_tarjeta_bus (num_tarjeta, saldo, estado) values
 ('1234567890123456', 50.00, 1),
 ('9876543210987654', 100.00, 1);
 
+
+update tb_usuario set id_tarjeta = 1 where id = 2;
+
 -- MEDIOS DE PAGO DE PRUEBA (para usuarios que se registren)
 -- Estos se insertarán después cuando se creen usuarios clientes de prueba
+insert into tb_medio_pago (tipo, descripcion, numero_enmascarado, estado, id_usuario) values 
+('Tarjeta', 'Debito VISA', '12341234123412341234', 1, 2);
 
 -- LINEAS
 insert into tb_linea (nombre, estado) values

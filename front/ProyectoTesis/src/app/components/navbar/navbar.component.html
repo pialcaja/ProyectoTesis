@@ -1,7 +1,7 @@
 <nav class="navbar">
 
   <!-- Logo -->
-  <a routerLink="/" class="logo">MiApp</a>
+  <a routerLink="/" class="logo">RecargaLima</a>
 
   <!-- Botón hamburguesa -->
   <div class="hamburger" (click)="toggleMenu()">
@@ -17,38 +17,46 @@
     <a routerLink="/nosotros">Nosotros</a>
     <a routerLink="/contacto">Contacto</a>
 
-    
-    <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/buscar">Ruta</a>
+    <!-- Dropdown RUTA -->
+    <div class="dropdown" *ngIf="authService.hasRole('CLIENTE')">
+      <span class="dropdown-btn" (click)="toggleDropdown('ruta')">
+        Ruta
+      </span>
+
+      <div class="dropdown-content" [class.open]="dropdownOpen === 'ruta'">
+
+        <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/buscar">Consultar mejor ruta</a>
+        <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/notificaciones">Notificaciones</a>
+      </div>
+    </div>
 
     <!-- Dropdown TARJETA -->
-<div class="dropdown" *ngIf="authService.hasRole('CLIENTE')">
-  <span class="dropdown-btn" (click)="toggleDropdown('tarjeta')">
-    Tarjeta
-  </span>
+    <div class="dropdown" *ngIf="authService.hasRole('CLIENTE')">
+      <span class="dropdown-btn" (click)="toggleDropdown('tarjeta')">
+        Tarjeta
+      </span>
 
-  <div class="dropdown-content" 
-       [class.open]="dropdownOpen === 'tarjeta'">
+      <div class="dropdown-content" [class.open]="dropdownOpen === 'tarjeta'">
 
-    <a routerLink="/consultar-saldo">Consultar saldo</a>
-    <a routerLink="/recargar-tarjeta">Recargar tarjeta</a>
-  </div>
-</div>
+        <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/consultar-saldo">Consultar saldo</a>
+        <a routerLink="/recargar-tarjeta">Recargar tarjeta</a>
+      </div>
+    </div>
 
     <!-- Dropdown USUARIO -->
-<div class="dropdown" *ngIf="isLoggedIn">
-  <span class="dropdown-btn" (click)="toggleDropdown('user')">
-    {{ username }}
-  </span>
+    <div class="dropdown" *ngIf="isLoggedIn">
+      <span class="dropdown-btn" (click)="toggleDropdown('user')">
+        {{ username }}
+      </span>
 
-  <div class="dropdown-content" 
-       [class.open]="dropdownOpen === 'user'">
+      <div class="dropdown-content" [class.open]="dropdownOpen === 'user'">
 
-    <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/">Actualizar datos</a>
-    <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/">Consultar transacciones</a>
+        <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/actualizar-usuario">Actualizar datos</a>
+        <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/transacciones">Consultar transacciones</a>
 
-    <a (click)="logout()">Cerrar sesión</a>
-  </div>
-</div>
+        <a (click)="logout()">Cerrar sesión</a>
+      </div>
+    </div>
 
     <!-- No logueado -->
     <a *ngIf="!isLoggedIn" routerLink="/login">Ingresar</a>
