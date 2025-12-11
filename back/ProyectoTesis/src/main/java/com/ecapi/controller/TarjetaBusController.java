@@ -1,7 +1,10 @@
 package com.ecapi.controller;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +20,8 @@ import com.ecapi.dto.TarjetaBusDTO;
 import com.ecapi.service.TarjetaBusService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/tarjeta")
@@ -58,4 +63,17 @@ public class TarjetaBusController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    
+    @GetMapping("/transacciones")
+    public ResponseEntity<Map<String, Object>> listarTransacciones(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta
+    ) {
+        return tarjetaBusService.listarTransacciones(page, size, estado, fechaDesde, fechaHasta);
+    }
+
+    
 }

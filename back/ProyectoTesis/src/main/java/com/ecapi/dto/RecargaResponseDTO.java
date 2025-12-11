@@ -1,6 +1,6 @@
 package com.ecapi.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,5 +15,5 @@ public class RecargaResponseDTO {
     private String mensaje;
     private TarjetaBusDTO tarjeta;
     private double montoRecargado;
-    private LocalDateTime fechaTransaccion;
+    private LocalDate fechaTransaccion;
 }
