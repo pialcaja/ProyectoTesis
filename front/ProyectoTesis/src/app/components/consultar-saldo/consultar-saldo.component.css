@@ -1,11 +1,13 @@
 /* ===== FONDO ===== */
 .saldo-bg {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #4b79a1, #283e51);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 20px;
+    background: linear-gradient(135deg, #4b79a1, #283e51);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    min-height: 100dvh;
 }
 
 /* ===== ANIMACIÓN ===== */
@@ -209,4 +211,5 @@ h2 {
   .saldo-info h3 {
     font-size: 1.1rem;
   }
+
 }

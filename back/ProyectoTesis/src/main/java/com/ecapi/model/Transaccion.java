@@ -1,6 +1,6 @@
 package com.ecapi.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,7 +32,7 @@ public class Transaccion {
 	private double monto;
 	
 	@Column(nullable = false)
-	private LocalDateTime fecha;
+	private LocalDate fecha;
 	
 	@Column(nullable = false, length = 20)
 	private String estado; // EXITOSA, RECHAZADA, ERROR

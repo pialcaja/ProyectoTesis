@@ -1,3 +1,97 @@
 <app-navbar></app-navbar>
-<h3>VISTA TRANSACCIONES</h3>
-<p>En construcción</p>
+
+<div class="transacciones-bg fade-in">
+
+    <div class="transacciones-container">
+        <div class="transacciones-card">
+
+            <h2>Historial de Transacciones</h2>
+
+            <!-- FILTROS -->
+            <div class="filtros">
+
+                <div class="filtro-item">
+                    <label>Estado</label>
+                    <select [(ngModel)]="estado">
+                        <option value="">Todos</option>
+                        <option value="EXITOSA">Exitosa</option>
+                        <option value="RECHAZADA">Rechazada</option>
+                        <option value="ERROR">Error</option>
+                    </select>
+                </div>
+
+                <div class="filtro-item">
+                    <label>Desde</label>
+                    <input type="date" [(ngModel)]="fechaDesde">
+                </div>
+
+                <div class="filtro-item">
+                    <label>Hasta</label>
+                    <input type="date" [(ngModel)]="fechaHasta">
+                </div>
+
+            </div>
+
+            <!-- BOTONES FILTRO -->
+            <div class="acciones-filtros">
+                <button class="btn-primary" (click)="buscar()">Buscar</button>
+                <button class="btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
+            </div>
+
+            <hr />
+
+            <!-- LOADING -->
+            <div *ngIf="loading" class="loading-message">
+                <p>Cargando transacciones...</p>
+            </div>
+
+            <!-- ERROR -->
+            <div *ngIf="errorMsg" class="error">
+                {{ errorMsg }}
+            </div>
+
+            <!-- TABLA -->
+            <div *ngIf="!loading && !errorMsg">
+
+                <table class="tabla">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tipo</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr *ngFor="let t of transacciones; let i = index">
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ t.tipo }}</td>
+                            <td>S/. {{ t.monto }}</td>
+                            <td>{{ t.fecha | date:'dd/MM/yyyy' }}</td>
+                            <td>
+                                <span [class.estado-exitosa]="t.estado === 'EXITOSA'"
+                                    [class.estado-rechazada]="t.estado === 'RECHAZADA'"
+                                    [class.estado-error]="t.estado === 'ERROR'">
+                                    {{ t.estado }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <!-- PAGINACIÓN -->
+            <div class="paginacion">
+                <button class="btn-secondary" (click)="anterior()" [disabled]="page === 0">Anterior</button>
+                <span>Página {{ page + 1 }} de {{ totalPages }}</span>
+                <button class="btn-secondary" (click)="siguiente()"
+                    [disabled]="page + 1 >= totalPages">Siguiente</button>
+            </div>
+
+        </div>
+    </div>
+
+</div>

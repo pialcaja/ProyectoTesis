@@ -1,11 +1,13 @@
 /* ===== FONDO ===== */
 .login-bg {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #4b79a1, #283e51);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 20px;
+    background: linear-gradient(135deg, #4b79a1, #283e51);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    min-height: 100dvh;
 }
 
 /* ===== ANIMACIÓN ===== */
@@ -21,15 +23,17 @@
 /* ===== TARJETA ===== */
 .login-container {
   width: 100%;
-  max-width: 420px;
+  max-width: 500px;
 }
 
 .login-card {
-  width: 100%;
-  background: white;
-  padding: 35px 30px;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 /* ===== TITULO ===== */
