@@ -1,0 +1,230 @@
+<div class="admin-container">
+
+    <!-- Menú lateral -->
+    <aside class="sidebar">
+        <h2>Panel de
+            <br>
+            Administrador
+        </h2>
+
+        <button class="menu-btn" [class.active]="selected === 'rutas'" (click)="seleccionar('rutas')">
+            Mantenimiento de Rutas
+        </button>
+
+        <button class="menu-btn" [class.active]="selected === 'trabajadores'" (click)="seleccionar('trabajadores')">
+            Mantenimiento de Trabajadores
+        </button>
+
+        <button class="menu-btn" [class.active]="selected === 'reportes'" (click)="seleccionar('reportes')">
+            Reporte de Uso de Tarjeta
+        </button>
+
+        <button class="logout-btn" (click)="logout()">
+            Cerrar Sesión
+        </button>
+    </aside>
+
+    <!-- Contenido dinámico -->
+    <main class="content">
+
+        <!-- RUTAS -->
+        <div *ngIf="selected === 'rutas'">
+            <div class="module">
+
+                <h2>Mantenimiento de Rutas</h2>
+
+                <!-- ===== LISTADO ===== -->
+                <div class="card">
+                    <h3>Listado de Rutas</h3>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Línea</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Ruta 101</td>
+                                <td>Línea Roja</td>
+                                <td>Activo</td>
+                                <td>
+                                    <button class="btn-details">Detalles</button>
+                                    <button class="btn-delete">Eliminar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ===== FORMULARIO ===== -->
+                <div class="card form-card">
+                    <h3>Registrar / Editar Ruta</h3>
+
+                    <form>
+                        <label>Nombre:</label>
+                        <input type="text" placeholder="Nombre de la ruta" />
+
+                        <label>Línea:</label>
+                        <select>
+                            <option value="">Seleccione una línea</option>
+                        </select>
+
+                        <label>Estado:</label>
+                        <select>
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+
+                        <button class="btn-primary">Guardar</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TRABAJADORES -->
+        <div *ngIf="selected === 'trabajadores'">
+            <div class="module">
+
+                <h2>Mantenimiento de Trabajadores</h2>
+
+                <!-- ===== LISTADO ===== -->
+                <div class="card">
+                    <h3>Listado de Trabajadores</h3>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Rol</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>10</td>
+                                <td>Juan</td>
+                                <td>Pérez López</td>
+                                <td>ADMIN</td>
+                                <td>Activo</td>
+                                <td>
+                                    <button class="btn-details">Detalles</button>
+                                    <button class="btn-delete">Eliminar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ===== FORMULARIO ===== -->
+                <div class="card form-card">
+                    <h3>Registrar / Editar Trabajador</h3>
+
+                    <form>
+                        <label>Nombre:</label>
+                        <input type="text" placeholder="Nombre" />
+
+                        <label>Apellido Paterno:</label>
+                        <input type="text" placeholder="Apellido paterno" />
+
+                        <label>Apellido Materno:</label>
+                        <input type="text" placeholder="Apellido materno" />
+
+                        <label>DNI:</label>
+                        <input type="text" maxlength="8" placeholder="DNI" />
+
+                        <label>Email:</label>
+                        <input type="email" placeholder="Correo electrónico" />
+
+                        <label>Rol:</label>
+                        <select>
+                            <option value="ADMIN">Administrador</option>
+                            <option value="TRABAJADOR">Trabajador</option>
+                        </select>
+
+                        <label>Estado:</label>
+                        <select>
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+
+                        <button class="btn-primary">Guardar</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- REPORTES -->
+        <div *ngIf="selected === 'reportes'">
+            <div class="module">
+
+                <h2>Reporte de Uso de Tarjeta</h2>
+
+                <!-- ===== FILTROS ===== -->
+                <div class="card">
+                    <h3>Filtros</h3>
+
+                    <form class="filter-form">
+
+                        <label>Número de Tarjeta:</label>
+                        <input type="text" placeholder="Ej. 1234567891234567" />
+
+                        <label>Fecha Inicio:</label>
+                        <input type="date" />
+
+                        <label>Fecha Fin:</label>
+                        <input type="date" />
+
+                        <button class="btn-primary">Buscar</button>
+                    </form>
+                </div>
+
+                <!-- ===== RESULTADOS ===== -->
+                <div class="card">
+                    <h3>Transacciones</h3>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                                <th>Tarjeta</th>
+                                <th>Usuario</th>
+                                <th>Medio de Pago</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>2025-01-15</td>
+                                <td>RECARGA</td>
+                                <td>S/ 10.00</td>
+                                <td>EXITOSA</td>
+                                <td>1234-5678-9123-4567</td>
+                                <td>Piero</td>
+                                <td>Yape</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+</div>

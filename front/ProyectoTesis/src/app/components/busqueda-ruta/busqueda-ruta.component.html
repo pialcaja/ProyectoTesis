@@ -13,10 +13,7 @@
       Usar mi ubicación
     </button>
 
-    <button
-      class="btn-warning"
-      *ngIf="usandoUbicacionActual"
-      (click)="dejarDeUsarUbicacion()">
+    <button class="btn-warning" *ngIf="usandoUbicacionActual" (click)="dejarDeUsarUbicacion()">
       Dejar de usar ubicación
     </button>
 
@@ -27,11 +24,59 @@
       Buscar Ruta
     </button>
 
-  </div>
+    <!-- CARD DE RESULTADO DE BÚSQUEDA -->
+    <div *ngIf="resultado" class="resultado-card">
 
+      <h2>Detalles de la Ruta Encontrada</h2>
+
+      <div class="ruta-info">
+
+        <p><strong>Ruta:</strong> {{ resultado.rutaNombre }}</p>
+        <p><strong>Sentido:</strong> {{ resultado.sentido }}</p>
+
+        <hr />
+
+        <h3>Paradero más cercano al origen</h3>
+        <p><strong>{{ paraderoOrigen?.nombre }}</strong></p>
+
+        <h3>Paradero más cercano al destino</h3>
+        <p><strong>{{ paraderoDestino?.nombre }}</strong></p>
+
+        <hr />
+
+        <div>
+          <button class="btn-primary" (click)="abrirModalParaderos()">
+            Ruta completa
+          </button>
+        </div>
+
+      </div>
+
+
+
+    </div>
+
+  </div>
   <!-- COLUMNA DEL MAPA -->
   <div class="map-wrapper">
     <div #mapContainer id="map"></div>
   </div>
+
+<!-- MODAL DE PARADEROS -->
+<div class="modal-backdrop" *ngIf="modalAbierto">
+  <div class="modal" *ngIf="resultado">
+
+    <button class="close-btn" (click)="cerrarModalParaderos()">✕</button>
+
+    <h3>Paraderos de la ruta {{ resultado.rutaNombre }}</h3>
+
+    <ul class="paraderos-list">
+      <li *ngFor="let p of resultado.paraderosRuta">
+        {{ p.nombre }}
+      </li>
+    </ul>
+
+  </div>
+</div>
 
 </section>

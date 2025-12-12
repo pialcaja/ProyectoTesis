@@ -1,3 +1,55 @@
 <app-navbar></app-navbar>
-<h3>VISTA ACTUALIZAR-USUARIO</h3>
-<p>En construcción</p>
+
+<div class="update-container">
+    <div class="update-card">
+
+        <h2 class="title">Actualizar Usuario</h2>
+
+        <form #formUsuario="ngForm" class="formulario">
+
+            <!-- Nombre -->
+            <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" class="form-control" name="nombre" [(ngModel)]="usuario.nombre" required
+                    minlength="2">
+            </div>
+
+            <!-- Apellido Paterno -->
+            <div class="form-group">
+                <label>Apellido Paterno</label>
+                <input type="text" class="form-control" name="apepa" [(ngModel)]="usuario.apepa" required minlength="2">
+            </div>
+
+            <!-- Apellido Materno -->
+            <div class="form-group">
+                <label>Apellido Materno</label>
+                <input type="text" class="form-control" name="apema" [(ngModel)]="usuario.apema" required minlength="2">
+            </div>
+
+            <!-- DNI -->
+            <div class="form-group">
+                <label>DNI</label>
+                <input type="text" class="form-control" name="dni" [(ngModel)]="usuario.dni" required minlength="8"
+                    maxlength="8">
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" class="form-control" name="email" [(ngModel)]="usuario.email" required>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" class="form-control" name="pwd" [(ngModel)]="usuario.pwd" required minlength="4">
+            </div>
+
+            <button class="btn-update" (click)="guardar()" [disabled]="formUsuario.invalid">
+                Guardar Cambios
+            </button>
+
+        </form>
+
+    </div>
+</div>

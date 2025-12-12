@@ -7,17 +7,20 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   selector: 'app-admin-view',
   imports: [CommonModule],
-  template: `
-    <h1>Vista del Admin</h1>
-    <p>Bienvenido administrador.</p>
-
-    <button (click)="logout()">Cerrar sesión</button>
-  `
+  templateUrl: './admin-view.component.html',
+  styleUrls: ['./admin-view.component.css']
 })
 export class AdminViewComponent {
+  
+  selected: string = 'rutas';
+
   constructor(private auth: AuthService, private router: Router) {}
 
   logout() {
     this.auth.logout();
+  }
+
+  seleccionar(op: string) {
+    this.selected = op;
   }
 }
