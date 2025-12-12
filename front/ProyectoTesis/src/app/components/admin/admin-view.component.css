@@ -1,0 +1,276 @@
+/* =====================================
+   CONTENEDOR PRINCIPAL
+===================================== */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #f2f2f7;
+}
+
+/* =====================================
+   SIDEBAR
+===================================== */
+.sidebar {
+  width: 250px;
+  background: #1e1e2f;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.menu-btn {
+  background: #29293d;
+  border: none;
+  padding: 12px;
+  margin-bottom: 10px;
+  color: white;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.25s;
+}
+
+.menu-btn:hover {
+  background: #3d3d56;
+}
+
+.menu-btn.active {
+  background: #5561ff;
+}
+
+.logout-btn {
+  margin-top: auto;
+  background: #ff4b4b;
+  border: none;
+  padding: 12px;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: background 0.25s;
+}
+
+.logout-btn:hover {
+  background: #ff6767;
+}
+
+/* =====================================
+   CONTENIDO PRINCIPAL
+===================================== */
+.content {
+  flex-grow: 1;
+  padding: 30px;
+}
+
+.welcome {
+  text-align: center;
+  color: #555;
+  margin-top: 40px;
+  font-size: 20px;
+}
+
+.module {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* =====================================
+   TARJETAS (CARD)
+===================================== */
+.card {
+  background: white;
+  padding: 25px 28px;
+  margin-bottom: 25px;
+  border-radius: 15px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.card h3 {
+  font-size: 22px;
+  margin-bottom: 14px;
+  font-weight: bold;
+  color: #222;
+}
+
+/* =====================================
+   TABLAS
+===================================== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.table th {
+  background: #5561ff;
+  color: white;
+  padding: 12px;
+  font-size: 15px;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #ccc;
+  background: #fafafa;
+}
+
+/* =====================================
+   BOTONES DE ACCIONES
+===================================== */
+.btn-details {
+  background: #ffc107;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 5px;
+  font-weight: 600;
+  transition: 0.25s;
+}
+
+.btn-details:hover {
+  background: #e0b200;
+}
+
+.btn-delete {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s;
+}
+
+.btn-delete:hover {
+  background: #b9232f;
+}
+
+.btn-primary {
+  background: #5561ff;
+  color: white;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.25s;
+}
+
+.btn-primary:hover {
+  background: #3f47d1;
+}
+
+/* =====================================
+   FORMULARIOS (REGISTRO/EDICIÓN & FILTROS)
+===================================== */
+.form-card form,
+.filter-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.form-card form label,
+.filter-form label {
+  font-weight: 600;
+  color: #333;
+  grid-column: span 2;
+  margin-top: 5px;
+}
+
+.form-card input,
+.filter-form input,
+.form-card select,
+.filter-form select {
+  padding: 12px;
+  border: 1.5px solid #bbb;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: 0.25s;
+  width: 100%;
+}
+
+.form-card input:focus,
+.filter-form input:focus,
+.form-card select:focus,
+.filter-form select:focus {
+  border-color: #5561ff;
+  box-shadow: 0 0 6px rgba(85,97,255,0.4);
+  outline: none;
+}
+
+.form-card button,
+.filter-form button {
+  grid-column: span 2;
+  padding: 12px;
+  background: #5561ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.form-card button:hover,
+.filter-form button:hover {
+  background: #3f47d1;
+}
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+@media (max-width: 850px) {
+  .admin-container {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 10px;
+  }
+  .sidebar h2 {
+    display: none;
+  }
+  .menu-btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-card form,
+  .filter-form {
+    grid-template-columns: 1fr;
+  }
+
+  .form-card form button,
+  .filter-form button {
+    grid-column: span 1;
+  }
+
+  .card {
+    padding: 18px;
+  }
+}
+
+/* =====================================
+   ANIMACIONES
+===================================== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
