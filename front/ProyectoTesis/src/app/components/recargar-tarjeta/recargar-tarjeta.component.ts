@@ -16,6 +16,7 @@ export class RecargarTarjetaComponent implements OnInit {
 
 
   tarjeta: TarjetaBus | null = null;
+  numeroTarjetaIngresada: string | null = null;
   mediosPago: MedioPago[] = [];
   montos: number[] = [10, 20, 30, 50, 100];
   montoSeleccionado: number | null = null;
@@ -32,6 +33,8 @@ export class RecargarTarjetaComponent implements OnInit {
   mostrarConfirmacion: boolean = false;
   recargaExitosa: boolean = false;
   nuevoSaldo: number = 0;
+  lastRecarga: RecargaResponse | null = null;
+  mostrarComprobante: boolean = false;
 
   constructor(
     private tarjetaBusService: TarjetaBusService,
@@ -173,6 +176,7 @@ export class RecargarTarjetaComponent implements OnInit {
 
         if (response.exitosa) {
           this.recargaExitosa = true;
+          this.lastRecarga = response;
           this.successMsg = response.mensaje;
           this.nuevoSaldo = response.tarjeta?.saldo || 0;
           this.tarjeta = response.tarjeta || this.tarjeta;
@@ -193,6 +197,14 @@ export class RecargarTarjetaComponent implements OnInit {
         this.errorMsg = err.error || 'Error al procesar la recarga.';
       }
     });
+  }
+
+  abrirComprobante() {
+    this.mostrarComprobante = true;
+  }
+
+  cerrarComprobante() {
+    this.mostrarComprobante = false;
   }
 
   nuevaRecarga() {

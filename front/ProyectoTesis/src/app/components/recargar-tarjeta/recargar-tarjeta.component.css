@@ -395,6 +395,35 @@ h3 {
   gap: 10px;
 }
 
+/* ===== COMPROBANTE MODAL ===== */
+.comprobante-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.comprobante-modal {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.comprobante-body { margin: 12px 0 18px 0; }
+.comprobante-body .detalle-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee; }
+
+.comprobante-actions { display:flex; gap:10px; justify-content:flex-end }
+
+.tarjeta-input { margin: 18px 0; }
+.tarjeta-input label { display:block; margin-bottom:6px; color:#333 }
+.tarjeta-input input { width:100%; padding:10px; border-radius:8px; border:1px solid #ccc }
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 480px) {
   .recarga-card {

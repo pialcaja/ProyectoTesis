@@ -3,6 +3,7 @@ import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CarruselHeroComponent } from '../carrusel-hero/carrusel-hero.component';
+import { HeroPrincipalComponent } from '../hero-principal/hero-principal.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
@@ -12,7 +13,8 @@ import { NavbarComponent } from '../navbar/navbar.component';
     CommonModule, 
     RouterModule,
     NavbarComponent,
-    CarruselHeroComponent
+    CarruselHeroComponent,
+    HeroPrincipalComponent
 
   ],
   templateUrl: './home.component.html',

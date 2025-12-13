@@ -32,6 +32,12 @@
           </div>
         </div>
 
+        <!-- Permitir ingresar número de tarjeta manualmente -->
+        <div class="tarjeta-input">
+          <label>O ingrese el número de tarjeta a recargar</label>
+          <input type="text" placeholder="Número de tarjeta" [(ngModel)]="numeroTarjetaIngresada" />
+        </div>
+
         <!-- Selección de monto -->
         <div class="seccion-monto">
           <h3>Seleccione el monto a recargar</h3>
@@ -142,6 +148,24 @@
         <div class="acciones">
           <button class="btn-primary" (click)="nuevaRecarga()">Nueva Recarga</button>
           <button class="btn-secondary" (click)="irAConsultar()">Ver Saldo</button>
+          <button class="btn-secondary" *ngIf="lastRecarga" (click)="abrirComprobante()">Ver comprobante</button>
+        </div>
+      </div>
+
+      <!-- Comprobante modal -->
+      <div class="comprobante-overlay" *ngIf="mostrarComprobante">
+        <div class="comprobante-modal">
+          <h3>Comprobante de Recarga</h3>
+          <div class="comprobante-body">
+            <div class="detalle-row"><span>Tarjeta:</span><span>{{ numeroTarjetaIngresada || tarjeta?.numTarjeta || 'N/A' }}</span></div>
+            <div class="detalle-row"><span>Monto:</span><span>S/ {{ lastRecarga?.montoRecargado?.toFixed(2) || (montoSeleccionado?.toFixed(2)) }}</span></div>
+            <div class="detalle-row"><span>Fecha:</span><span>{{ lastRecarga?.fechaTransaccion || '-' }}</span></div>
+            <div class="detalle-row"><span>Mensaje:</span><span>{{ lastRecarga?.mensaje }}</span></div>
+          </div>
+          <div class="comprobante-actions">
+            <button class="btn-primary" (click)="cerrarComprobante()">Cerrar</button>
+            <button class="btn-secondary" (click)="window.print()">Imprimir</button>
+          </div>
         </div>
       </div>
 
