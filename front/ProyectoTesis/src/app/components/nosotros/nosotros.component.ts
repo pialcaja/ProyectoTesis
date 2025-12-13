@@ -8,6 +8,7 @@ import { NavbarComponent } from "../navbar/navbar.component";
   selector: 'app-nosotros-view',
   imports: [CommonModule, NavbarComponent],
   templateUrl: './nosotros.component.html',
+  styleUrls: ['./nosotros.component.css'],
 })
 export class NosotrosComponent implements OnInit {
 
