@@ -1,0 +1,94 @@
+/* Styles for the Nosotros (About Us) view */
+.nosotros-container {
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 0 16px;
+  color: #333;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.nosotros-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 0;
+}
+
+.nosotros-hero .title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.nosotros-hero .subtitle {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}
+
+.nosotros-section {
+  margin-top: 18px;
+  padding: 18px 0;
+  border-top: 1px solid #eee;
+}
+
+.mission {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.team-card {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.team-card img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.team-card .info {
+  display: flex;
+  flex-direction: column;
+}
+
+.team-card .name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.team-card .role {
+  font-size: 12px;
+  color: #777;
+}
+
+@media (max-width: 900px) {
+  .team-grid { grid-template-columns: repeat(2, 1fr); }
+  .nosotros-hero { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 520px) {
+  .team-grid { grid-template-columns: 1fr; }
+  .nosotros-container { padding: 0 12px; }
+  .nosotros-hero .title { font-size: 22px; }
+}
+
+/* Utility tweaks */
+.muted { color: #666; font-size: 13px; }
