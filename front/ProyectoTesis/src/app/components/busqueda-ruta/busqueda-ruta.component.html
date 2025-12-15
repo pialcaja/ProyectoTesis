@@ -4,55 +4,71 @@
   <!-- COLUMNA DEL FORMULARIO -->
   <div class="form-card">
 
-    <h2>Encuentra la mejor ruta</h2>
+    <h2>🧭 Encuentra la mejor ruta</h2>
 
-    <label>Origen:</label>
-    <input #origenInput type="text" placeholder="Ingresa la ubicación de origen" />
+    <label>📍 Origen:</label>
+    <input #origenInput type="text" placeholder="Ingresa la ubicación de origen" (input)="onOrigenInputChange()" />
 
-    <button class="btn-secondary" (click)="usarUbicacionActual()">
-      Usar mi ubicación
+    <button class="btn-secondary" (click)="usarUbicacionActual()"
+      [disabled]="origenTieneTexto || usandoUbicacionActual">
+      📡 Usar mi ubicación
     </button>
 
     <button class="btn-warning" *ngIf="usandoUbicacionActual" (click)="dejarDeUsarUbicacion()">
-      Dejar de usar ubicación
+      ❌ Dejar de usar ubicación
     </button>
 
-    <label>Destino:</label>
-    <input #destinoInput type="text" placeholder="Ingresa la ubicación de destino" />
+    <label>🎯 Destino:</label>
+    <input #destinoInput type="text" placeholder="Ingresa la ubicación de destino" (input)="onDestinoInputChange()" />
 
-    <button class="btn-primary" (click)="buscar()">
-      Buscar Ruta
+    <button class="btn-primary" (click)="buscar()" [disabled]="!origenTieneTexto || !destinoTieneTexto">
+      🔍 Buscar Ruta
     </button>
 
     <!-- CARD DE RESULTADO DE BÚSQUEDA -->
     <div *ngIf="resultado" class="resultado-card">
 
-      <h2>Detalles de la Ruta Encontrada</h2>
+      <h2>🚌 Detalles de la Ruta Encontrada</h2>
 
       <div class="ruta-info">
 
-        <p><strong>Ruta:</strong> {{ resultado.rutaNombre }}</p>
-        <p><strong>Sentido:</strong> {{ resultado.sentido }}</p>
+        <p>
+          <strong>🛣️ Ruta:</strong> {{ resultado.rutaNombre }}
+        </p>
+
+        <p>
+          <strong>🔁 Sentido:</strong> {{ resultado.sentido }}
+        </p>
 
         <hr />
 
-        <h3>Paradero más cercano al origen</h3>
-        <p><strong>{{ paraderoOrigen?.nombre }}</strong></p>
+        <h3>📍 Paradero más cercano al origen</h3>
+        <p>
+          <strong>
+            {{ paraderoOrigen?.nombre }}
+            |
+            🕒 Próximo bus a las {{ paraderoOrigen?.horaLlegadaAproximada }}
+          </strong>
+        </p>
 
-        <h3>Paradero más cercano al destino</h3>
-        <p><strong>{{ paraderoDestino?.nombre }}</strong></p>
+        <h3>🏁 Paradero más cercano al destino</h3>
+        <p>
+          <strong>
+            {{ paraderoDestino?.nombre }}
+            |
+            🕒 Llegada aprox. {{ paraderoDestino?.horaLlegadaAproximada }}
+          </strong>
+        </p>
 
         <hr />
 
         <div>
           <button class="btn-primary" (click)="abrirModalParaderos()">
-            Ruta completa
+            📋 Ruta completa
           </button>
         </div>
 
       </div>
-
-
 
     </div>
 
@@ -62,21 +78,28 @@
     <div #mapContainer id="map"></div>
   </div>
 
-<!-- MODAL DE PARADEROS -->
-<div class="modal-backdrop" *ngIf="modalAbierto">
-  <div class="modal" *ngIf="resultado">
+  <!-- MODAL DE PARADEROS -->
+  <div class="modal-backdrop" *ngIf="modalAbierto">
+    <div class="modal" *ngIf="resultado">
 
-    <button class="close-btn" (click)="cerrarModalParaderos()">✕</button>
+      <button class="close-btn" (click)="cerrarModalParaderos()">✕</button>
 
-    <h3>Paraderos de la ruta {{ resultado.rutaNombre }}</h3>
+      <h3>🗺️ Paraderos de la ruta {{ resultado.rutaNombre }}</h3>
 
-    <ul class="paraderos-list">
-      <li *ngFor="let p of resultado.paraderosRuta">
-        {{ p.nombre }}
-      </li>
-    </ul>
+      <ul class="paraderos-list">
+        <li *ngFor="let p of resultado.paraderosRuta">
+          <span class="paradero-nombre">
+            🚏 {{ p.nombre }}
+          </span>
+
+          <span class="paradero-hora">
+            🕒 {{ p.horaLlegadaAproximada }}
+          </span>
+        </li>
+      </ul>
+
+    </div>
 
   </div>
-</div>
 
 </section>

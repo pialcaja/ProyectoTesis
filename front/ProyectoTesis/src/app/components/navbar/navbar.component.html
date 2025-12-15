@@ -15,20 +15,6 @@
 
     <a routerLink="/">Inicio</a>
     <a routerLink="/nosotros">Nosotros</a>
-    <a routerLink="/contacto">Contacto</a>
-
-    <!-- Dropdown RUTA -->
-    <div class="dropdown" *ngIf="authService.hasRole('CLIENTE')">
-      <span class="dropdown-btn" (click)="toggleDropdown('ruta')">
-        Ruta
-      </span>
-
-      <div class="dropdown-content" [class.open]="dropdownOpen === 'ruta'">
-
-        <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/buscar">Consultar mejor ruta</a>
-        <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/notificaciones">Notificaciones</a>
-      </div>
-    </div>
 
     <!-- Dropdown TARJETA -->
     <div class="dropdown" *ngIf="authService.hasRole('CLIENTE')">
@@ -40,6 +26,19 @@
 
         <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/consultar-saldo">Consultar saldo</a>
         <a routerLink="/recargar-tarjeta">Recargar tarjeta</a>
+      </div>
+    </div>
+
+    <!-- Dropdown RUTA -->
+    <div class="dropdown" *ngIf="authService.hasRole('CLIENTE')">
+      <span class="dropdown-btn" (click)="toggleDropdown('ruta')">
+        Ruta
+      </span>
+
+      <div class="dropdown-content" [class.open]="dropdownOpen === 'ruta'">
+
+        <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/buscar">Consultar mejor ruta</a>
+        <a *ngIf="authService.hasRole('CLIENTE')" routerLink="/notificaciones">Notificaciones</a>
       </div>
     </div>
 
