@@ -36,6 +36,9 @@ export class BusquedaRutaComponent implements AfterViewInit {
   isLoggedIn = false;
   username = '';
 
+  origenTieneTexto = false;
+  destinoTieneTexto = false;
+
   private apiKey = 'AIzaSyBWdkrFQPP7uApLAj1NqEkaoEQT3Cp-4-8';
 
   constructor(
@@ -188,6 +191,8 @@ export class BusquedaRutaComponent implements AfterViewInit {
 
             google.maps.event.clearInstanceListeners(this.origenInput.nativeElement);
 
+            this.origenTieneTexto = true;
+
             this.cdr.detectChanges();
           } else {
             alert('No se encontró la dirección de tu ubicación.');
@@ -218,6 +223,18 @@ export class BusquedaRutaComponent implements AfterViewInit {
         { fields: ['geometry', 'name'], strictBounds: false }
       );
     }
+
+    this.origenTieneTexto = false;
+  }
+
+  onOrigenInputChange() {
+    const value = this.origenInput.nativeElement.value;
+    this.origenTieneTexto = value.trim().length > 0;
+  }
+
+  onDestinoInputChange() {
+    const value = this.destinoInput.nativeElement.value;
+    this.destinoTieneTexto = value.trim().length > 0;
   }
 
   logout() {

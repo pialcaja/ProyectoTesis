@@ -1,12 +1,13 @@
 package com.ecapi.serviceImpl;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,9 @@ public class BusquedaRutaServiceImpl implements BusquedaRutaService {
     @Autowired
     private RutaParaderoRepository rutaParaderoRepo;
 
-    private final double RADIO_KM = 0.5; // 500 metros
+    private final double RADIO_KM = 0.5;
+    
+    private static final int MINUTOS_POR_PARADERO = 4;
 
     @Override
     public ResponseEntity<MejorRutaResponseDTO> buscarMejorRuta(
@@ -118,6 +121,8 @@ public class BusquedaRutaServiceImpl implements BusquedaRutaService {
 
         dto.setOrigen(mapParadero(mejorParaderoOrigen));
         dto.setDestino(mapParadero(mejorParaderoDestino));
+        
+        LocalTime horaInicio = LocalTime.now();
 
         // 4. Enviar paraderos ordenados de la ruta seleccionada
         dto.setParaderosRuta(
@@ -125,7 +130,8 @@ public class BusquedaRutaServiceImpl implements BusquedaRutaService {
         	        mejorRutaId,
         	        mejorSentido,
         	        mejorParaderoOrigen.getId(),
-        	        mejorParaderoDestino.getId()
+        	        mejorParaderoDestino.getId(),
+        	        horaInicio
         	    )
         	);
 
@@ -213,15 +219,15 @@ public class BusquedaRutaServiceImpl implements BusquedaRutaService {
     }
 
     private ParaderoDTO mapParadero(Paradero p) {
-        return new ParaderoDTO(
-                p.getId(),
-                p.getNombre(),
-                p.getLat(),
-                p.getLng()
-        );
+        return ParaderoDTO.builder()
+                .id(p.getId())
+                .nombre(p.getNombre())
+                .lat(p.getLat())
+                .lng(p.getLng())
+                .build();
     }
 
-    private List<ParaderoDTO> mapRutaParaderos(Long rutaId, String sentido, Long origenId, Long destinoId) {
+    private List<ParaderoDTO> mapRutaParaderos(Long rutaId, String sentido, Long origenId, Long destinoId, LocalTime horaInicio) {
 
         int sentidoInt = sentido.equals("IDA") ? 1 : 2;
 
@@ -243,9 +249,30 @@ public class BusquedaRutaServiceImpl implements BusquedaRutaService {
             return Collections.emptyList();
         }
 
-        return lista.subList(idxO, idxD + 1).stream()
-                .map(rp -> mapParadero(rp.getParadero()))
-                .collect(Collectors.toList());
+        List<RutaParadero> subLista = lista.subList(idxO, idxD + 1);
+
+        List<ParaderoDTO> resultado = new ArrayList<>();
+
+        for (int i = 0; i < subLista.size(); i++) {
+
+            Paradero p = subLista.get(i).getParadero();
+
+            LocalTime horaParadero =
+            	    horaInicio.plusMinutes((i + 1) * MINUTOS_POR_PARADERO);
+
+            ParaderoDTO dto = new ParaderoDTO(
+                    p.getId(),
+                    p.getNombre(),
+                    p.getLat(),
+                    p.getLng(),
+                    horaParadero.format(DateTimeFormatter.ofPattern("HH:mm"))
+            );
+
+            resultado.add(dto);
+        }
+
+        return resultado;
+
     }
 
 }

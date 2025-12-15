@@ -18,7 +18,7 @@
 
       <!-- Formulario de recarga -->
       <div *ngIf="!loadingData && !sinTarjeta && !sinMediosPago && !recargaExitosa && !mostrarConfirmacion">
-        
+
         <!-- Información de la tarjeta -->
         <div class="tarjeta-info" *ngIf="tarjeta">
           <h3>Su Tarjeta</h3>
@@ -42,27 +42,18 @@
         <div class="seccion-monto">
           <h3>Seleccione el monto a recargar</h3>
           <div class="montos-grid">
-            <button 
-              *ngFor="let monto of montos" 
-              class="btn-monto"
-              [class.seleccionado]="montoSeleccionado === monto"
+            <button *ngFor="let monto of montos" class="btn-monto" [class.seleccionado]="montoSeleccionado === monto"
               (click)="seleccionarMonto(monto)">
               S/ {{ monto }}
             </button>
           </div>
-          
+
           <div class="monto-personalizado">
             <label>O ingrese un monto personalizado:</label>
             <div class="input-group">
               <span class="prefix">S/</span>
-              <input 
-                type="number" 
-                [(ngModel)]="montoPersonalizado"
-                (change)="usarMontoPersonalizado()"
-                placeholder="Ingrese monto"
-                min="1"
-                max="500"
-              />
+              <input type="number" [(ngModel)]="montoPersonalizado" (change)="usarMontoPersonalizado()"
+                placeholder="Ingrese monto" min="1" max="500" />
             </div>
           </div>
         </div>
@@ -71,11 +62,8 @@
         <div class="seccion-medio-pago">
           <h3>Seleccione un medio de pago</h3>
           <div class="medios-pago-lista">
-            <div 
-              *ngFor="let medio of mediosPago" 
-              class="medio-pago-item"
-              [class.seleccionado]="medioPagoSeleccionado === medio.id"
-              (click)="seleccionarMedioPago(medio.id)">
+            <div *ngFor="let medio of mediosPago" class="medio-pago-item"
+              [class.seleccionado]="medioPagoSeleccionado === medio.id" (click)="seleccionarMedioPago(medio.id)">
               <div class="medio-icon">
                 <span *ngIf="medio.tipo === 'TARJETA'">💳</span>
                 <span *ngIf="medio.tipo === 'YAPE'">📱</span>
@@ -118,7 +106,7 @@
             <span class="valor-destacado">S/ {{ ((tarjeta?.saldo || 0) + (montoSeleccionado || 0)).toFixed(2) }}</span>
           </div>
         </div>
-        
+
         <div class="confirmacion-acciones">
           <button class="btn-confirmar" (click)="confirmarRecarga()">Confirmar Recarga</button>
           <button class="btn-cancelar" (click)="cancelarRecarga()">Cancelar</button>
@@ -144,7 +132,7 @@
             <span class="saldo-nuevo">S/ {{ nuevoSaldo.toFixed(2) }}</span>
           </div>
         </div>
-        
+
         <div class="acciones">
           <button class="btn-primary" (click)="nuevaRecarga()">Nueva Recarga</button>
           <button class="btn-secondary" (click)="irAConsultar()">Ver Saldo</button>
@@ -157,14 +145,16 @@
         <div class="comprobante-modal">
           <h3>Comprobante de Recarga</h3>
           <div class="comprobante-body">
-            <div class="detalle-row"><span>Tarjeta:</span><span>{{ numeroTarjetaIngresada || tarjeta?.numTarjeta || 'N/A' }}</span></div>
-            <div class="detalle-row"><span>Monto:</span><span>S/ {{ lastRecarga?.montoRecargado?.toFixed(2) || (montoSeleccionado?.toFixed(2)) }}</span></div>
+            <div class="detalle-row"><span>Tarjeta:</span><span>{{ numeroTarjetaIngresada || tarjeta?.numTarjeta ||
+                'N/A' }}</span></div>
+            <div class="detalle-row"><span>Monto:</span><span>S/ {{ lastRecarga?.montoRecargado?.toFixed(2) ||
+                (montoSeleccionado?.toFixed(2)) }}</span></div>
             <div class="detalle-row"><span>Fecha:</span><span>{{ lastRecarga?.fechaTransaccion || '-' }}</span></div>
             <div class="detalle-row"><span>Mensaje:</span><span>{{ lastRecarga?.mensaje }}</span></div>
           </div>
           <div class="comprobante-actions">
             <button class="btn-primary" (click)="cerrarComprobante()">Cerrar</button>
-            <button class="btn-secondary" (click)="window.print()">Imprimir</button>
+            <button class="btn-secondary" (click)="imprimirComprobante()">Imprimir</button>
           </div>
         </div>
       </div>

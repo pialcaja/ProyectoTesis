@@ -3,6 +3,7 @@ export interface ParaderoDTO {
   nombre: string;
   lat: number;
   lng: number;
+  horaLlegadaAproximada?: string;
 }
 
 export interface MejorRutaResponseDTO {

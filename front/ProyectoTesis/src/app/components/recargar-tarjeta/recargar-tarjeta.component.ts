@@ -226,4 +226,9 @@ export class RecargarTarjetaComponent implements OnInit {
 
     return desc;
   }
+
+  imprimirComprobante() {
+    window.print();
+  }
+
 }

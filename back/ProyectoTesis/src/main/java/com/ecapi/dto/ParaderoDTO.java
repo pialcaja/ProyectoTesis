@@ -17,5 +17,5 @@ public class ParaderoDTO {
     private String nombre;
     private BigDecimal lat;
     private BigDecimal lng;
-    
+    private String horaLlegadaAproximada;
 }
