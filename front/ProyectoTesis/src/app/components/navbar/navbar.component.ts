@@ -42,7 +42,7 @@ export class NavbarComponent implements OnInit {
 
     // Evita múltiples suscripciones
     if (!this.pollingSub) {
-      this.pollingSub = this.alertaService.pollingAlertas(userId, 60)
+      this.pollingSub = this.alertaService.pollingAlertas(userId, 30)
         .subscribe(alertas => {
           console.log('===== Polling ejecutado =====');
           console.log('Alertas recibidas del backend:', alertas);

@@ -1,65 +1,68 @@
-import { Injectable } from '@angular/core';
-import {
-    HttpEvent,
-    HttpHandler,
-    HttpInterceptor,
-    HttpRequest,
-    HttpErrorResponse
-} from '@angular/common/http';
-import { Observable, throwError, switchMap, catchError } from 'rxjs';
+import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { catchError, switchMap, throwError, tap } from 'rxjs';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
-    private isRefreshing = false;
+  const authService = inject(AuthService);
+  const accessToken = authService.getAccessToken();
 
-    constructor(private authService: AuthService) { }
+  console.log('➡️ Request:', req.method, req.url);
 
-    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  let authReq = req;
 
-        console.log("📩 Interceptando:", req.url);
+  if (accessToken) {
+    console.log('🔐 Access token enviado:', accessToken.substring(0, 15) + '...');
+    authReq = req.clone({
+      setHeaders: { Authorization: `Bearer ${accessToken}` }
+    });
+  } else {
+    console.log('⚠️ No hay access token');
+  }
 
-        const accessToken = this.authService.getAccessToken();
-        let authReq = req;
+  return next(authReq).pipe(
 
-        if (accessToken) {
-            authReq = req.clone({
-                setHeaders: { Authorization: `Bearer ${accessToken}` }
-            });
-            console.log("🔐 Usando Access Token:", accessToken.substring(0, 15) + "...");
-        }
+    tap(event => {
+      // Solo para ver que la request pasa OK
+      console.log('✅ Response OK de:', req.url);
+    }),
 
-        return next.handle(authReq).pipe(
-            catchError((error: HttpErrorResponse) => {
+    catchError((error: HttpErrorResponse) => {
 
-                console.log("⚠️ ERROR INTERCEPTADO:", error);
+      console.error('❌ Error HTTP:', error.status, 'en', req.url);
 
+      if (
+        error.status === 401 &&
+        !req.url.includes('/auth/refresh')
+      ) {
+        console.warn('🔄 Access token expirado → intentando refresh');
 
-                if (error.status === 401 && !this.isRefreshing) {
+        return authService.refreshToken().pipe(
 
-                    this.isRefreshing = true;
+          tap(() => {
+            console.log('♻️ Refresh token OK, nuevo access token guardado');
+          }),
 
-                    return this.authService.refreshToken().pipe(
-                        switchMap((newToken: string) => {
-                            this.isRefreshing = false;
+          switchMap(newToken => {
+            console.log('🔁 Reintentando request original con nuevo token');
 
-                            const retryReq = req.clone({
-                                setHeaders: { Authorization: `Bearer ${newToken}` }
-                            });
+            return next(
+              req.clone({
+                setHeaders: { Authorization: `Bearer ${newToken}` }
+              })
+            );
+          }),
 
-                            return next.handle(retryReq);
-                        }),
-                        catchError(err => {
-                            this.isRefreshing = false;
-                            this.authService.logout();
-                            return throwError(() => err);
-                        })
-                    );
-                }
-
-                return throwError(() => error);
-            })
+          catchError(err => {
+            console.error('🚫 Refresh token FALLÓ → logout');
+            authService.logout();
+            return throwError(() => err);
+          })
         );
-    }
-}
+      }
+
+      return throwError(() => error);
+    })
+  );
+};
