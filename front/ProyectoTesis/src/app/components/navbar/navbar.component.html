@@ -60,6 +60,25 @@
     <!-- No logueado -->
     <a *ngIf="!isLoggedIn" routerLink="/login">Ingresar</a>
 
+    <!-- NOTIFICACIONES -->
+    <div class="dropdown notificaciones" *ngIf="authService.hasRole('CLIENTE')">
+      <span class="dropdown-btn" (click)="toggleDropdown('alertas')">
+        🔔 <span class="badge" *ngIf="contador > 0">{{ contador }}</span>
+      </span>
+
+      <div class="dropdown-content" [class.open]="dropdownOpen === 'alertas'">
+
+        <p *ngIf="alertas.length === 0" class="empty">
+          No hay alertas pendientes
+        </p>
+
+        <a *ngFor="let a of alertas" (click)="verAlerta(a)">
+          🚌 Ruta {{ a.rutaNombre }}<br>
+          🚏 {{ a.paraderoNombre }}
+        </a>
+      </div>
+    </div>
+
   </div>
 
 </nav>

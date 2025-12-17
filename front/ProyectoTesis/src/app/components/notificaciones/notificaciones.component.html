@@ -1,3 +1,33 @@
 <app-navbar></app-navbar>
-<h3>VISTA NOTIFICACIONES</h3>
-<p>En construcción</p>
+
+<div class="notificaciones-container">
+
+  <h2>🔔 Mis Notificaciones</h2>
+
+<div class="cuadro-cargando">
+      <p *ngIf="cargando">Cargando alertas...</p>
+
+  <p *ngIf="!cargando && alertas.length === 0">
+    No tienes alertas creadas
+  </p>
+</div>
+
+  <div class="notificaciones-card" *ngFor="let a of alertas">
+    <div class="alerta-info">
+      <h3>🚌 Ruta {{ a.rutaNombre }} |       <span class="estado" [class.pendiente]="a.estado === 'PENDIENTE'"
+            [class.enviada]="a.estado === 'ENVIADA'">
+        {{ a.estado }}
+      </span></h3>
+      <p>🚏 Paradero: <strong>{{ a.paraderoNombre }}</strong></p>
+      <p>➡️ Sentido: {{ a.sentido }}</p>
+      <p>⏱️ Avisar {{ a.minutosAntes }} min antes</p>
+
+
+    </div>
+
+    <button class="btn-danger" (click)="eliminar(a.id)">
+      🗑️
+    </button>
+  </div>
+
+</div>

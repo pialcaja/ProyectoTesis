@@ -101,4 +101,3 @@ hasRole(role: string): boolean {
     );
   }
 }
-

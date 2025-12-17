@@ -1,6 +1,8 @@
 package com.ecapi.serviceImpl;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import com.ecapi.dto.ParaderoDTO;
 import com.ecapi.model.Paradero;
 import com.ecapi.model.Ruta;
 import com.ecapi.model.RutaParadero;
+import com.ecapi.model.SentidoRuta;
 import com.ecapi.repository.ParaderoRepository;
 import com.ecapi.repository.RutaParaderoRepository;
 import com.ecapi.repository.RutaRepository;
@@ -194,7 +197,7 @@ public class BusquedaRutaServiceImpl implements BusquedaRutaService {
 
         ResultadoEvaluacion res = new ResultadoEvaluacion();
         res.distancia = ordenD - ordenO;
-        res.sentido = (sentido == 1) ? "IDA" : "RETORNO";
+        res.sentido = (sentido == 1) ? "IDA" : "VUELTA";
         return res;
     }
 
@@ -273,6 +276,109 @@ public class BusquedaRutaServiceImpl implements BusquedaRutaService {
 
         return resultado;
 
+    }
+
+    @Override
+    public MejorRutaResponseDTO calcularRutaConHorarios(Long rutaId, SentidoRuta sentido) {
+
+        Ruta ruta = rutaRepo.findById(rutaId)
+                .orElseThrow(() -> new RuntimeException("Ruta no encontrada"));
+
+        String sentidoTexto = (sentido == SentidoRuta.IDA) ? "IDA" : "VUELTA";
+
+        List<ParaderoDTO> paraderos = mapRutaParaderos(
+                rutaId,
+                sentidoTexto,
+                null,
+                null,
+                null
+        );
+
+        // Hora base
+        LocalTime horaInicio = LocalTime.now().plusMinutes(4);
+
+        List<ParaderoDTO> paraderosConHora = new ArrayList<>();
+
+        for (int i = 0; i < paraderos.size(); i++) {
+            ParaderoDTO p = paraderos.get(i);
+
+            LocalTime hora = horaInicio.plusMinutes(i * 4);
+
+            p.setHoraLlegadaAproximada(
+                hora.format(DateTimeFormatter.ofPattern("HH:mm"))
+            );
+
+            paraderosConHora.add(p);
+        }
+
+        MejorRutaResponseDTO dto = new MejorRutaResponseDTO();
+        dto.setRutaId(ruta.getId());
+        dto.setRutaNombre(ruta.getNombre());
+        dto.setSentido(sentidoTexto);
+        dto.setParaderosRuta(paraderosConHora);
+
+        return dto;
+    }
+
+
+    public LocalDateTime calcularHoraLlegadaParadero(
+            Long rutaId,
+            Long paraderoId,
+            SentidoRuta sentido) {
+
+        String sentidoTexto = (sentido == SentidoRuta.IDA) ? "IDA" : "VUELTA";
+
+        List<RutaParadero> lista = rutaParaderoRepo
+            .findByRutaIdAndSentidoOrderByOrdenAsc(
+                rutaId,
+                sentidoTexto.equals("IDA") ? 1 : 2
+            );
+
+        LocalTime horaInicio = LocalTime.now().plusMinutes(4);
+
+        for (int i = 0; i < lista.size(); i++) {
+            RutaParadero rp = lista.get(i);
+
+            if (rp.getParadero().getId().equals(paraderoId)) {
+
+                LocalTime hora = horaInicio.plusMinutes((i + 1) * MINUTOS_POR_PARADERO);
+
+                LocalDateTime fechaHora = LocalDateTime.of(LocalDate.now(), hora);
+
+                if (fechaHora.isBefore(LocalDateTime.now())) {
+                    fechaHora = fechaHora.plusDays(1);
+                }
+
+                return fechaHora;
+            }
+        }
+
+        return null;
+    }
+    
+    public ParaderoDTO obtenerParaderoDTO(Long rutaId, Long paraderoId, SentidoRuta sentido) {
+
+        String sentidoTexto = (sentido == SentidoRuta.IDA) ? "IDA" : "VUELTA";
+        int sentidoInt = sentidoTexto.equals("IDA") ? 1 : 2;
+
+        List<RutaParadero> lista = rutaParaderoRepo.findByRutaIdAndSentidoOrderByOrdenAsc(rutaId, sentidoInt);
+
+        for (int i = 0; i < lista.size(); i++) {
+            if (lista.get(i).getParadero().getId().equals(paraderoId)) {
+                Paradero p = lista.get(i).getParadero();
+                // Calculamos la hora aproximada como en mapRutaParaderos
+                LocalTime horaLlegada = LocalTime.now().plusMinutes((i + 1) * MINUTOS_POR_PARADERO);
+                return new ParaderoDTO(
+                        p.getId(),
+                        p.getNombre(),
+                        p.getLat(),
+                        p.getLng(),
+                        horaLlegada.format(DateTimeFormatter.ofPattern("HH:mm"))
+                );
+            }
+        }
+
+        return null; // no encontrado
     }
 
 }

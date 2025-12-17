@@ -88,18 +88,47 @@
 
       <ul class="paraderos-list">
         <li *ngFor="let p of resultado.paraderosRuta">
-          <span class="paradero-nombre">
+          <div>
+                      <span class="paradero-nombre">
             🚏 {{ p.nombre }}
           </span>
-
+          ➡️
           <span class="paradero-hora">
             🕒 {{ p.horaLlegadaAproximada }}
           </span>
+          </div>
+
+          <button class="btn-primary" (click)="abrirModalAlerta(p)" title="Notificarme">
+            🔔
+          </button>
         </li>
       </ul>
 
     </div>
 
+  </div>
+
+  <div class="modal-backdrop" *ngIf="mostrarModalAlerta">
+    <div class="modal">
+
+      <button class="close-btn" (click)="cerrarModal()">×</button>
+
+      <h3>Crear alerta</h3>
+
+      <p><strong>Paradero:</strong> {{ paraderoSeleccionado?.nombre }}</p>
+
+      <label>Minutos antes</label>
+      <select [(ngModel)]="minutosAntes">
+        <option [value]="5">5 minutos</option>
+        <option [value]="10">10 minutos</option>
+        <option [value]="15">15 minutos</option>
+      </select>
+
+      <button class="btn-primary" (click)="crearAlerta()">
+        Crear alerta
+      </button>
+
+    </div>
   </div>
 
 </section>
