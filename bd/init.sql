@@ -91,6 +91,23 @@ create table tb_transaccion(
     constraint fk_transaccion_tarjeta foreign key (id_tarjeta) references tb_tarjeta_bus(id),
     constraint fk_transaccion_medio_pago foreign key (id_medio_pago) references tb_medio_pago(id)
 );
+-- ALERTA_NOTIFICACION
+create table tb_alerta_notificacion (
+    id int primary key auto_increment,
+    usuario_id int not null,
+    ruta_id int not null,
+    paradero_id int not null,
+    sentido enum('IDA', 'VUELTA') not null,
+    minutos_antes int not null,
+    canal_notificacion enum('WEB', 'EMAIL') not null,
+    estado enum('PENDIENTE', 'ENVIADA', 'CANCELADA') not null default 'PENDIENTE',
+    fecha_creacion datetime not null,
+    fecha_envio datetime null,
+    fecha_hora_llegada datetime not null,
+    constraint fk_alerta_usuario foreign key (usuario_id) references tb_usuario(id),
+    constraint fk_alerta_ruta foreign key (ruta_id) references tb_ruta(id),
+    constraint fk_alerta_paradero foreign key (paradero_id) references tb_paradero(id)
+);
 
 -- =========================================
 -- INSERTS

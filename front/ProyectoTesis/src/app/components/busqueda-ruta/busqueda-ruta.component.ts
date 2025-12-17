@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BusquedaRutaService } from '../../services/busqueda-ruta.service';
@@ -7,6 +7,7 @@ import { MejorRutaResponseDTO, ParaderoDTO } from '../../models/mejor-ruta-respo
 import { GeocodingService } from '../../services/geocoding.service';
 import { AuthService } from '../../services/auth.service';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { AlertaNotificacionService, CrearAlertaRequest } from '../../services/alerta-notificacion.service';
 
 @Component({
   selector: 'app-busqueda-ruta',
@@ -14,6 +15,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
   imports: [CommonModule, FormsModule, NavbarComponent],
   templateUrl: './busqueda-ruta.component.html',
   styleUrl: './busqueda-ruta.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BusquedaRutaComponent implements AfterViewInit {
 
@@ -39,6 +41,10 @@ export class BusquedaRutaComponent implements AfterViewInit {
   origenTieneTexto = false;
   destinoTieneTexto = false;
 
+  mostrarModalAlerta = false;
+  paraderoSeleccionado?: ParaderoDTO;
+  minutosAntes = 5;
+
   private apiKey = 'AIzaSyBWdkrFQPP7uApLAj1NqEkaoEQT3Cp-4-8';
 
   constructor(
@@ -46,7 +52,8 @@ export class BusquedaRutaComponent implements AfterViewInit {
     private authService: AuthService,
     private mapLoader: MapLoaderService,
     private geocodingService: GeocodingService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private alertaService: AlertaNotificacionService
   ) { }
 
   ngOnInit(): void {
@@ -109,7 +116,7 @@ export class BusquedaRutaComponent implements AfterViewInit {
         this.paraderoDestino = response.paraderosRuta[response.paraderosRuta.length - 1];
       }
 
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
       this.clearMap();
       this.drawRoute(origenCoords, destinoCoords, response);
     });
@@ -193,7 +200,7 @@ export class BusquedaRutaComponent implements AfterViewInit {
 
             this.origenTieneTexto = true;
 
-            this.cdr.detectChanges();
+            this.cdr.markForCheck();
           } else {
             alert('No se encontró la dirección de tu ubicación.');
           }
@@ -249,6 +256,57 @@ export class BusquedaRutaComponent implements AfterViewInit {
 
   cerrarModalParaderos() {
     this.modalAbierto = false;
+  }
+
+  abrirModalAlerta(paradero: ParaderoDTO) {
+    this.paraderoSeleccionado = paradero;
+    this.mostrarModalAlerta = true;
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }
+
+  cerrarModal() {
+    this.mostrarModalAlerta = false;
+  }
+
+  crearAlerta() {
+    if (
+      !this.resultado ||
+      !this.resultado.rutaId ||
+      !this.resultado.sentido ||
+      !this.paraderoSeleccionado
+    ) {
+      alert('No hay información suficiente para crear la alerta');
+      return;
+    }
+
+    // Tomar la hora aproximada del paradero seleccionado
+    const horaLlegada = this.paraderoSeleccionado.horaLlegadaAproximada;
+    if (!horaLlegada) {
+      alert('No se pudo obtener la hora de llegada del paradero seleccionado');
+      return;
+    }
+
+    const request: CrearAlertaRequest = {
+      usuarioId: this.authService.getUserId(),
+      rutaId: this.resultado.rutaId,
+      paraderoId: this.paraderoSeleccionado.id,
+      sentido: this.resultado.sentido,
+      minutosAntes: this.minutosAntes,
+      horaLlegadaAproximada: horaLlegada // <--- Enviamos la hora
+    };
+
+    this.alertaService.crearAlerta(request).subscribe({
+      next: () => {
+        alert('🔔 Alerta creada correctamente');
+        this.cerrarModal();
+      },
+      error: (err) => {
+        console.error(err);
+        alert('❌ Error al crear la alerta');
+      }
+    });
   }
 
 }

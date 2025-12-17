@@ -1,0 +1,139 @@
+/* ===== CONTENEDOR GENERAL ===== */
+.notificaciones-container {
+  background: linear-gradient(135deg, #4b79a1, #283e51);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: calc(100dvh - 64px); /* navbar-safe */
+}
+
+.cuadro-cargando {
+  text-align: center;
+  color: #f6f7ff;
+}
+
+/* ===== CARD PRINCIPAL ===== */
+.notificaciones-card {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background: #ffffff;
+  width: 500px;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+  animation: fadeIn 0.4s ease;
+  align-items: center;
+}
+
+/* ===== TITULOS ===== */
+.notificaciones-container h2 {
+  margin-bottom: 15px;
+  text-align: center;
+  color: #f6f7ff;
+}
+
+.notificaciones-card h3 {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  color: #5561ff;
+}
+
+/* ===== LISTA DE ALERTAS ===== */
+.alerta-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.alerta-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f6f7ff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border-left: 4px solid #5561ff;
+}
+
+.alerta-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.alerta-info strong {
+  font-size: 1rem;
+  color: #333;
+}
+
+.alerta-info span {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.notificaciones-card p {
+  margin: 5px;
+}
+
+/* ===== BOTONES ===== */
+.alerta-actions {
+  display: flex;
+  gap: 8px;
+}
+
+button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  height: fit-content;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #0066ff;
+  color: white;
+}
+
+.btn-danger {
+  background: #e17055;
+  color: white;
+}
+
+/* ===== ESTADO VACÍO ===== */
+.alerta-vacia {
+  text-align: center;
+  color: #555;
+  padding: 30px 10px;
+  font-size: 1rem;
+}
+
+/* ===== ANIMACIÓN ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== >= 768px ===== */
+@media (min-width: 768px) {
+  .notificaciones-container {
+    padding: 30px 60px;
+  }
+
+  .notificaciones-card {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+}

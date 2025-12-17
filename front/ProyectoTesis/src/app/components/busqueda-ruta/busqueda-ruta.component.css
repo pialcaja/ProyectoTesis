@@ -238,6 +238,7 @@ button:disabled {
   margin-bottom: 8px;
   border-left: 4px solid #5561ff;
   color: #333;
+  align-items: center;
 }
 
 .paradero-hora {
