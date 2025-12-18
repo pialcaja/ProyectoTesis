@@ -53,7 +53,13 @@
             <!-- TABLA -->
             <div *ngIf="!loading && !errorMsg">
 
-                <table class="tabla">
+                <!-- MENSAJE SIN RESULTADOS -->
+                <div *ngIf="transacciones.length === 0" class="no-resultados">
+                    <p>🔍 No se encontraron transacciones con los filtros seleccionados.</p>
+                </div>
+
+                <!-- TABLA -->
+                <table *ngIf="transacciones.length > 0" class="tabla">
                     <thead>
                         <tr>
                             <th>#</th>

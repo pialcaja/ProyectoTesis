@@ -17,20 +17,16 @@ export class TransaccionesComponent implements OnInit {
   isLoggedIn = false;
   username = '';
 
-  // Filtros
-  estado: string = '';
-  fechaDesde: string = '';
-  fechaHasta: string = '';
+  estado = '';
+  fechaDesde = '';
+  fechaHasta = '';
 
-  // Datos
   transacciones: Transaccion[] = [];
 
-  // Paginación
   page = 0;
   size = 10;
   totalPages = 0;
 
-  // Estado
   loading = false;
   errorMsg: string | null = null;
 
@@ -51,14 +47,13 @@ export class TransaccionesComponent implements OnInit {
     this.cargarTransacciones();
   }
 
-  buscar() {
+  buscar(): void {
     this.page = 0;
     this.transacciones = [];
     this.cargarTransacciones();
   }
 
-
-  cargarTransacciones() {
+  cargarTransacciones(): void {
     this.loading = true;
     this.errorMsg = null;
 
@@ -71,12 +66,10 @@ export class TransaccionesComponent implements OnInit {
         this.fechaHasta
       )
       .subscribe({
-        next: (data) => {
+        next: data => {
           this.transacciones = data.transacciones;
           this.totalPages = data.totalPages;
           this.loading = false;
-
-
           this.cdr.detectChanges();
         },
         error: () => {
@@ -86,7 +79,7 @@ export class TransaccionesComponent implements OnInit {
       });
   }
 
-  limpiarFiltros() {
+  limpiarFiltros(): void {
     this.estado = '';
     this.fechaDesde = '';
     this.fechaHasta = '';
@@ -94,21 +87,21 @@ export class TransaccionesComponent implements OnInit {
     this.cargarTransacciones();
   }
 
-  anterior() {
+  anterior(): void {
     if (this.page > 0) {
       this.page--;
       this.cargarTransacciones();
     }
   }
 
-  siguiente() {
+  siguiente(): void {
     if (this.page + 1 < this.totalPages) {
       this.page++;
       this.cargarTransacciones();
     }
   }
 
-  logout() {
+  logout(): void {
     this.authService.logout();
   }
 }

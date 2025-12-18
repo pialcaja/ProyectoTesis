@@ -11,20 +11,20 @@ export class BusquedaRutaService {
 
   private apiUrl = 'http://localhost:8080/api/busqueda';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   mejorRuta(latOrigen: number, lngOrigen: number, latDestino: number, lngDestino: number):
     Observable<MejorRutaResponseDTO> {
 
     return this.http.get<MejorRutaResponseDTO>(
       `${this.apiUrl}/mejor-ruta`, {
-        params: {
-          latOrigen,
-          lngOrigen,
-          latDestino,
-          lngDestino
-        }
+      params: {
+        latOrigen,
+        lngOrigen,
+        latDestino,
+        lngDestino
       }
+    }
     );
   }
 }

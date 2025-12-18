@@ -32,7 +32,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String path = request.getServletPath();
 
-        // 🔓 Endpoints públicos
         if (path.startsWith("/auth/")) {
             chain.doFilter(request, response);
             return;
@@ -78,8 +77,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
 
         } catch (ExpiredJwtException ex) {
-
-            System.out.println("⏰ TOKEN EXPIRADO → devolviendo 401");
 
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");

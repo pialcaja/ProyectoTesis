@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Alerta, AlertaNotificacionService } from '../../services/alerta-notificacion.service';
-import { Subscription } from 'rxjs';
+import { EMPTY, Subject, Subscription, switchMap, takeUntil, tap } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-navbar',
@@ -13,80 +14,92 @@ import { Subscription } from 'rxjs';
   styleUrl: './navbar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavbarComponent implements OnInit {
-
-  isLoggedIn = false;
-  username = '';
-  menuOpen = false;
-
-  dropdownOpen: string | null = null;
+export class NavbarComponent implements OnInit, OnDestroy {
 
   alertas: Alerta[] = [];
   contador = 0;
+  dropdownOpen: string | null = null;
+  isLoggedIn = false;
+  menuOpen = false;
+  notificadas = new Set<number>();
+  username = '';
 
+  private destroy$ = new Subject<void>();
   private cdr = inject(ChangeDetectorRef);
 
-  constructor(public authService: AuthService, private alertaService: AlertaNotificacionService) { }
-
-  notificadas = new Set<number>(); // IDs de alertas ya notificadas
-  private pollingSub?: Subscription;
+  constructor(
+    public authService: AuthService,
+    private alertaService: AlertaNotificacionService
+  ) { }
 
   ngOnInit(): void {
-    // Actualiza estado de login y username
-    this.authService.isLoggedIn$.subscribe(status => {
-      this.isLoggedIn = status;
-      this.username = this.authService.getUsername();
-    });
 
-    const userId = this.authService.getUserId();
+    this.authService.isLoggedIn$
+      .pipe(
+        takeUntil(this.destroy$),
+        tap(status => {
+          this.isLoggedIn = status;
+          this.username = this.authService.getUsername();
+        }),
+        switchMap(isLoggedIn => {
 
-    // Evita múltiples suscripciones
-    if (!this.pollingSub) {
-      this.pollingSub = this.alertaService.pollingAlertas(userId, 30)
-        .subscribe(alertas => {
-          console.log('===== Polling ejecutado =====');
-          console.log('Alertas recibidas del backend:', alertas);
+          if (!isLoggedIn) {
+            this.alertas = [];
+            this.contador = 0;
+            this.notificadas.clear();
+            return EMPTY;
+          }
 
-          const ahora = new Date();
-          const pendientes = alertas.filter(a => a.estado === 'PENDIENTE');
-          console.log('Alertas pendientes del backend:', pendientes);
+          const userId = this.authService.getUserId();
+          return this.alertaService.pollingAlertas(userId, 30);
+        })
+      )
+      .subscribe(alertas => {
 
-          pendientes.forEach(a => {
-            const fechaEnvio = new Date(a.fechaEnvio);
-            console.log(a.id, a.estado, a.fechaEnvio);
+        const ahora = new Date();
+        const pendientes = alertas.filter(a => a.estado === 'PENDIENTE');
 
-            if (!this.notificadas.has(a.id) && fechaEnvio <= ahora) {
-              // Marcar como notificadas para que no se repitan
-              this.notificadas.add(a.id);
+        pendientes.forEach(a => {
+          const fechaEnvio = new Date(a.fechaEnvio);
 
-              // Notificación tipo alert
-              alert(`🚌 Bus por llegar\nRuta: ${a.rutaNombre}\nParadero: ${a.paraderoNombre}`);
+          if (fechaEnvio <= ahora && !this.notificadas.has(a.id)) {
 
-              // Notificación de navegador opcional
-              this.mostrarNotificacion(a);
-            }
-          });
+            Swal.fire({
+              icon: 'info',
+              title: '🚌 Bus por llegar',
+              html: `
+                <div style="text-align:left">
+                  <p><strong>Ruta:</strong> ${a.rutaNombre}</p>
+                  <p><strong>Paradero:</strong> ${a.paraderoNombre}</p>
+                </div>
+              `,
+              toast: true,
+              position: 'top-end',
+              showConfirmButton: false,
+              timer: 6000,
+              timerProgressBar: true
+            });
 
-          // Contador solo de alertas pendientes cuya fecha ya pasó
-          this.contador = pendientes.filter(a => new Date(a.fechaEnvio) <= ahora).length;
-
-          // Actualiza la lista de alertas
-          this.alertas = alertas;
-
-          console.log('Contador actualizado:', this.contador);
-          console.log('=============================');
-
-          this.cdr.markForCheck();
+            this.mostrarNotificacion(a);
+            this.notificadas.add(a.id);
+          }
         });
-    }
+
+        this.contador = pendientes.filter(
+          a => new Date(a.fechaEnvio) <= ahora
+        ).length;
+
+        this.alertas = alertas;
+        this.cdr.markForCheck();
+      });
   }
 
   ngOnDestroy(): void {
-    this.pollingSub?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   mostrarNotificacion(alerta: Alerta) {
-
     if (Notification.permission === 'granted') {
       new Notification('🚌 Bus por llegar', {
         body: `Ruta ${alerta.rutaNombre}
@@ -97,7 +110,6 @@ Paradero: ${alerta.paraderoNombre}`,
   }
 
   verAlerta(alerta: Alerta) {
-
     this.alertaService.marcarComoEnviada(alerta.id).subscribe(() => {
       this.alertas = this.alertas.filter(a => a.id !== alerta.id);
       this.contador = this.alertas.length;
@@ -106,12 +118,12 @@ Paradero: ${alerta.paraderoNombre}`,
     this.dropdownOpen = null;
   }
 
-  toggleMenu() {
-    this.menuOpen = !this.menuOpen;
-  }
-
   toggleDropdown(name: string) {
     this.dropdownOpen = this.dropdownOpen === name ? null : name;
+  }
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
   }
 
   logout() {

@@ -25,88 +25,67 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final UsuarioRepository usuarioRepo;
-    private final RolRepository rolRepo;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authManager;
-    private final JwtUtils jwtUtils;
-    private final CustomUserDetailsService userDetailsService;
+	private final UsuarioRepository usuarioRepo;
+	private final RolRepository rolRepo;
+	private final PasswordEncoder passwordEncoder;
+	private final AuthenticationManager authManager;
+	private final JwtUtils jwtUtils;
+	private final CustomUserDetailsService userDetailsService;
 
-    @Override
-    public AuthResponse register(RegisterRequest request) {
+	@Override
+	public AuthResponse register(RegisterRequest request) {
 
-        if (usuarioRepo.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("El email ya está registrado");
-        }
+		if (usuarioRepo.existsByEmail(request.getEmail())) {
+			throw new RuntimeException("El email ya está registrado");
+		}
 
-        Rol rolCliente = rolRepo.findByNombre("CLIENTE")
-                .orElseThrow(() -> new RuntimeException("Rol CLIENTE no existe"));
+		Rol rolCliente = rolRepo.findByNombre("CLIENTE")
+				.orElseThrow(() -> new RuntimeException("Rol CLIENTE no existe"));
 
-        Usuario usuario = new Usuario();
-        usuario.setNombre(request.getNombre());
-        usuario.setApepa(request.getApepa());
-        usuario.setApema(request.getApema());
-        usuario.setDni(request.getDni());
-        usuario.setEmail(request.getEmail());
-        usuario.setPwd(passwordEncoder.encode(request.getPwd()));
-        usuario.setEstado(1);
-        usuario.setRol(rolCliente);
-        usuario.setTarjeta(null);
+		Usuario usuario = new Usuario();
+		usuario.setNombre(request.getNombre());
+		usuario.setApepa(request.getApepa());
+		usuario.setApema(request.getApema());
+		usuario.setDni(request.getDni());
+		usuario.setEmail(request.getEmail());
+		usuario.setPwd(passwordEncoder.encode(request.getPwd()));
+		usuario.setEstado(1);
+		usuario.setRol(rolCliente);
+		usuario.setTarjeta(null);
 
-        usuarioRepo.save(usuario);
+		usuarioRepo.save(usuario);
 
-        UserDetails details = new CustomUserDetails(usuario);
+		UserDetails details = new CustomUserDetails(usuario);
 
-        return new AuthResponse(
-                jwtUtils.generateToken(details),
-                jwtUtils.generateRefreshToken(details),
-                usuario.getId(),
-                usuario.getNombre(),
-                usuario.getEmail(),
-                usuario.getRol().getNombre()
-        );
-    }
+		return new AuthResponse(jwtUtils.generateToken(details), jwtUtils.generateRefreshToken(details),
+				usuario.getId(), usuario.getNombre(), usuario.getEmail(), usuario.getRol().getNombre());
+	}
 
-    @Override
-    public AuthResponse login(LoginRequest request) {
+	@Override
+	public AuthResponse login(LoginRequest request) {
 
-        Authentication auth = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(), request.getPwd()
-                )
-        );
+		Authentication auth = authManager
+				.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPwd()));
 
-        UserDetails details = (UserDetails) auth.getPrincipal();
-        Usuario usuario = usuarioRepo.findByEmail(details.getUsername()).get();
+		UserDetails details = (UserDetails) auth.getPrincipal();
+		Usuario usuario = usuarioRepo.findByEmail(details.getUsername()).get();
 
-        return new AuthResponse(
-                jwtUtils.generateToken(details),
-                jwtUtils.generateRefreshToken(details),
-                usuario.getId(),
-                usuario.getNombre(),
-                usuario.getEmail(),
-                usuario.getRol().getNombre()
-        );
-    }
+		return new AuthResponse(jwtUtils.generateToken(details), jwtUtils.generateRefreshToken(details),
+				usuario.getId(), usuario.getNombre(), usuario.getEmail(), usuario.getRol().getNombre());
+	}
 
-    @Override
-    public AuthResponse refreshToken(String refreshToken) {
+	@Override
+	public AuthResponse refreshToken(String refreshToken) {
 
-        String email = jwtUtils.extractUsername(refreshToken);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+		String email = jwtUtils.extractUsername(refreshToken);
+		UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-        if (!jwtUtils.isTokenValid(refreshToken, userDetails))
-            throw new RuntimeException("Refresh token inválido");
+		if (!jwtUtils.isTokenValid(refreshToken, userDetails))
+			throw new RuntimeException("Refresh token inválido");
 
-        Usuario usuario = usuarioRepo.findByEmail(email).get();
+		Usuario usuario = usuarioRepo.findByEmail(email).get();
 
-        return new AuthResponse(
-                jwtUtils.generateToken(userDetails),
-                jwtUtils.generateRefreshToken(userDetails),
-                usuario.getId(),
-                usuario.getNombre(),
-                usuario.getEmail(),
-                usuario.getRol().getNombre()
-        );
-    }
+		return new AuthResponse(jwtUtils.generateToken(userDetails), jwtUtils.generateRefreshToken(userDetails),
+				usuario.getId(), usuario.getNombre(), usuario.getEmail(), usuario.getRol().getNombre());
+	}
 }

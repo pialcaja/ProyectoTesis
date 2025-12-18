@@ -1,42 +1,33 @@
-/* ===== FONDO ===== */
 .login-bg {
-    background: linear-gradient(135deg, #4b79a1, #283e51);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    padding: 15px;
-    min-height: 100dvh;
+  background: linear-gradient(135deg, #4b79a1, #283e51);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 15px;
+  min-height: 100dvh;
 }
 
-/* ===== ANIMACIÓN ===== */
 .fade-in {
   animation: fadeIn 0.7s ease-out;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== TARJETA ===== */
 .login-container {
   width: 100%;
   max-width: 500px;
 }
 
 .login-card {
-    background: #ffffff;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-/* ===== TITULO ===== */
 h2 {
   text-align: center;
   margin-bottom: 20px;
@@ -44,7 +35,6 @@ h2 {
   color: #1d2b3a;
 }
 
-/* ===== INPUTS ===== */
 input {
   width: 94%;
   padding: 12px;
@@ -54,7 +44,6 @@ input {
   font-size: 1rem;
 }
 
-/* ===== BOTÓN PRINCIPAL ===== */
 .btn-primary {
   width: 100%;
   padding: 12px;
@@ -71,14 +60,12 @@ input {
   background: #3a5c7b;
 }
 
-/* ===== ERROR ===== */
 .error {
   color: #d62828;
   text-align: center;
   margin-top: 8px;
 }
 
-/* ===== ENLACE A REGISTRO ===== */
 .register-link {
   margin-top: 18px;
   text-align: center;
@@ -97,7 +84,6 @@ input {
   color: #2e5270;
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 480px) {
   .login-card {
     padding: 28px 22px;
@@ -124,5 +110,17 @@ input {
 
   input {
     padding: 10px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
