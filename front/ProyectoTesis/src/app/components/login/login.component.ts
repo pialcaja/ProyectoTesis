@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
+import Swal from 'sweetalert2';
 
 @Component({
   standalone: true,
@@ -44,7 +45,13 @@ export class LoginComponent {
           this.router.navigate(['/home']);
         }
       },
-      error: () => this.errorMsg = 'Credenciales inválidas'
+      error: () => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Credenciales inválidas',
+          text: 'El correo o la contraseña no son correctos'
+        });
+      }
     });
   }
 

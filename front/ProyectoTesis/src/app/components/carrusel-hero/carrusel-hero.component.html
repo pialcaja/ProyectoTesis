@@ -1,16 +1,14 @@
 <div class="hero-container">
-  <img 
-    [src]="images[currentIndex()]"
-    class="hero-image"
-    alt="banner"
-  />
 
-  <!-- Capa oscura para contraste -->
+  <ng-container *ngIf="mostrarImagen()">
+    <img [src]="images[currentIndex()]" class="hero-image" alt="banner" />
+  </ng-container>
+
   <div class="overlay"></div>
 
-  <!-- Texto encima -->
   <div class="hero-text bottom-left">
     <h1>{{ getTitle() }}</h1>
     <p>{{ getSubtitle() }}</p>
   </div>
+
 </div>

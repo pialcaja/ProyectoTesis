@@ -21,7 +21,8 @@
     <label>🎯 Destino:</label>
     <input #destinoInput type="text" placeholder="Ingresa la ubicación de destino" (input)="onDestinoInputChange()" />
 
-    <button class="btn-primary" (click)="buscar()" [disabled]="!origenTieneTexto || !destinoTieneTexto">
+    <button class="btn-primary" (click)="buscar()"
+      [disabled]="!(origenTieneTexto || usandoUbicacionActual) || !destinoTieneTexto">
       🔍 Buscar Ruta
     </button>
 
@@ -89,13 +90,13 @@
       <ul class="paraderos-list">
         <li *ngFor="let p of resultado.paraderosRuta">
           <div>
-                      <span class="paradero-nombre">
-            🚏 {{ p.nombre }}
-          </span>
-          ➡️
-          <span class="paradero-hora">
-            🕒 {{ p.horaLlegadaAproximada }}
-          </span>
+            <span class="paradero-nombre">
+              🚏 {{ p.nombre }}
+            </span>
+            ➡️
+            <span class="paradero-hora">
+              🕒 {{ p.horaLlegadaAproximada }}
+            </span>
           </div>
 
           <button class="btn-primary" (click)="abrirModalAlerta(p)" title="Notificarme">
@@ -109,24 +110,35 @@
   </div>
 
   <div class="modal-backdrop" *ngIf="mostrarModalAlerta">
-    <div class="modal">
+    <div class="modal modal-alerta">
 
       <button class="close-btn" (click)="cerrarModal()">×</button>
 
-      <h3>Crear alerta</h3>
+      <h3 class="modal-title">🔔 Crear alerta</h3>
 
-      <p><strong>Paradero:</strong> {{ paraderoSeleccionado?.nombre }}</p>
+      <div class="alerta-info">
+        <p class="alerta-paradero">
+          🚏 <strong>{{ paraderoSeleccionado?.nombre }}</strong>
+        </p>
+      </div>
 
-      <label>Minutos antes</label>
-      <select [(ngModel)]="minutosAntes">
-        <option [value]="5">5 minutos</option>
-        <option [value]="10">10 minutos</option>
-        <option [value]="15">15 minutos</option>
+      <label class="modal-label">⏰ Notificarme con:</label>
+
+      <select class="modal-select" [(ngModel)]="minutosAntes">
+        <option [value]="5">5 minutos antes</option>
+        <option [value]="10">10 minutos antes</option>
+        <option [value]="15">15 minutos antes</option>
       </select>
 
-      <button class="btn-primary" (click)="crearAlerta()">
-        Crear alerta
-      </button>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="cerrarModal()">
+          Cancelar
+        </button>
+
+        <button class="btn-primary" (click)="crearAlerta()">
+          Crear alerta
+        </button>
+      </div>
 
     </div>
   </div>

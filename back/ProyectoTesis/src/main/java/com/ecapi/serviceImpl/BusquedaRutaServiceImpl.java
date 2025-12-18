@@ -29,356 +29,303 @@ import com.ecapi.service.BusquedaRutaService;
 @Service
 public class BusquedaRutaServiceImpl implements BusquedaRutaService {
 
-    @Autowired
-    private ParaderoRepository paraderoRepo;
-
-    @Autowired
-    private RutaRepository rutaRepo;
-
-    @Autowired
-    private RutaParaderoRepository rutaParaderoRepo;
-
-    private final double RADIO_KM = 0.5;
-    
-    private static final int MINUTOS_POR_PARADERO = 4;
-
-    @Override
-    public ResponseEntity<MejorRutaResponseDTO> buscarMejorRuta(
-            BigDecimal latOrigen, BigDecimal lngOrigen,
-            BigDecimal latDestino, BigDecimal lngDestino) {
-
-        MejorRutaResponseDTO dto = new MejorRutaResponseDTO();
-
-        double latO = latOrigen.doubleValue();
-        double lngO = lngOrigen.doubleValue();
-        double latD = latDestino.doubleValue();
-        double lngD = lngDestino.doubleValue();
-
-        // 1. Buscar paraderos cercanos
-        List<Paradero> candidatosOrigen = listarParaderosEnRango(latO, lngO, RADIO_KM);
-        List<Paradero> candidatosDestino = listarParaderosEnRango(latD, lngD, RADIO_KM);
-
-        if (candidatosOrigen.isEmpty() && candidatosDestino.isEmpty()) {
-            dto.setMensaje("No hay paraderos cercanos ni al origen ni al destino (fuera del área de servicio).");
-            return ResponseEntity.ok(dto);
-        }
-
-        if (candidatosOrigen.isEmpty()) {
-            dto.setMensaje("No hay paraderos cercanos al ORIGEN (máx. 500 metros).");
-            return ResponseEntity.ok(dto);
-        }
-
-        if (candidatosDestino.isEmpty()) {
-            dto.setMensaje("No hay paraderos cercanos al DESTINO (máx. 500 metros).");
-            return ResponseEntity.ok(dto);
-        }
-
-        // 2. Comparar TODAS las combinaciones posibles
-        Long mejorRutaId = null;
-        int menorDistancia = Integer.MAX_VALUE;
-        String mejorSentido = null;
-        Paradero mejorParaderoOrigen = null;
-        Paradero mejorParaderoDestino = null;
-
-        for (Paradero pOrigen : candidatosOrigen) {
-            List<RutaParadero> rutasOrigen = rutaParaderoRepo.findByParaderoId(pOrigen.getId());
-
-            for (Paradero pDestino : candidatosDestino) {
-                List<RutaParadero> rutasDestino = rutaParaderoRepo.findByParaderoId(pDestino.getId());
-
-                for (RutaParadero r1 : rutasOrigen) {
-                    for (RutaParadero r2 : rutasDestino) {
-
-                        if (!Objects.equals(r1.getRuta().getId(), r2.getRuta().getId())) continue;
-
-                        Long rutaId = r1.getRuta().getId();
-
-                        ResultadoEvaluacion res = evaluarSentidos(rutaId, pOrigen, pDestino);
-
-                        if (res != null && res.distancia < menorDistancia) {
-                            menorDistancia = res.distancia;
-                            mejorRutaId = rutaId;
-                            mejorSentido = res.sentido;
-                            mejorParaderoOrigen = pOrigen;
-                            mejorParaderoDestino = pDestino;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (mejorRutaId == null) {
-            dto.setMensaje("No existe un sentido válido para conectar origen y destino en una misma ruta.");
-            dto.setOrigen(mapParadero(candidatosOrigen.get(0)));
-            dto.setDestino(mapParadero(candidatosDestino.get(0)));
-            return ResponseEntity.ok(dto);
-        }
-
-        // 3. Construir respuesta detallada
-        Ruta mejorRuta = rutaRepo.findById(mejorRutaId).orElse(null);
-
-        dto.setRutaId(mejorRuta.getId());
-        dto.setRutaNombre(mejorRuta.getNombre());
-        dto.setSentido(mejorSentido);
-        dto.setDistanciaOrden(menorDistancia);
-
-        dto.setOrigen(mapParadero(mejorParaderoOrigen));
-        dto.setDestino(mapParadero(mejorParaderoDestino));
-        
-        LocalTime horaInicio = LocalTime.now();
-
-        // 4. Enviar paraderos ordenados de la ruta seleccionada
-        dto.setParaderosRuta(
-        	    mapRutaParaderos(
-        	        mejorRutaId,
-        	        mejorSentido,
-        	        mejorParaderoOrigen.getId(),
-        	        mejorParaderoDestino.getId(),
-        	        horaInicio
-        	    )
-        	);
+	@Autowired
+	private ParaderoRepository paraderoRepo;
 
-        dto.setMensaje("Ruta óptima encontrada.");
-
-        return ResponseEntity.ok(dto);
-    }
-
-    // ----------------------------------------------------------------------
-    // MÉTODOS PRIVADOS
-    // ----------------------------------------------------------------------
-
-    private List<Paradero> listarParaderosEnRango(double lat, double lng, double radioKm) {
-        List<Paradero> todos = paraderoRepo.findAll();
-        List<Paradero> resultado = new ArrayList<>();
-
-        for (Paradero p : todos) {
-            double distancia = calcularDistanciaKm(lat, lng,
-                    p.getLat().doubleValue(), p.getLng().doubleValue());
-
-            if (distancia <= radioKm) {
-                resultado.add(p);
-            }
-        }
+	@Autowired
+	private RutaRepository rutaRepo;
 
-        // Ordenar por distancia
-        resultado.sort(Comparator.comparingDouble(
-                p -> calcularDistanciaKm(lat, lng, p.getLat().doubleValue(), p.getLng().doubleValue())
-        ));
+	@Autowired
+	private RutaParaderoRepository rutaParaderoRepo;
 
-        return resultado;
-    }
+	private final double RADIO_KM = 0.5;
+	private static final int MINUTOS_POR_PARADERO = 4;
 
-    private ResultadoEvaluacion evaluarSentidos(Long rutaId, Paradero origen, Paradero destino) {
-        ResultadoEvaluacion ida = evaluarSentido(rutaId, origen, destino, 1);
-        ResultadoEvaluacion retorno = evaluarSentido(rutaId, origen, destino, 2);
+	@Override
+	public ResponseEntity<MejorRutaResponseDTO> buscarMejorRuta(BigDecimal latOrigen, BigDecimal lngOrigen,
+			BigDecimal latDestino, BigDecimal lngDestino) {
 
-        if (ida == null) return retorno;
-        if (retorno == null) return ida;
+		MejorRutaResponseDTO dto = new MejorRutaResponseDTO();
 
-        return (ida.distancia < retorno.distancia) ? ida : retorno;
-    }
+		double latO = latOrigen.doubleValue();
+		double lngO = lngOrigen.doubleValue();
+		double latD = latDestino.doubleValue();
+		double lngD = lngDestino.doubleValue();
 
-    private ResultadoEvaluacion evaluarSentido(Long rutaId, Paradero origen, Paradero destino, int sentido) {
+		List<Paradero> candidatosOrigen = listarParaderosEnRango(latO, lngO, RADIO_KM);
+		List<Paradero> candidatosDestino = listarParaderosEnRango(latD, lngD, RADIO_KM);
 
-        List<RutaParadero> lista = rutaParaderoRepo.findByRutaIdAndSentidoOrderByOrdenAsc(rutaId, sentido);
+		if (candidatosOrigen.isEmpty() && candidatosDestino.isEmpty()) {
+			dto.setMensaje("No hay paraderos cercanos ni al origen ni al destino (fuera del área de servicio).");
+			return ResponseEntity.ok(dto);
+		}
 
-        Integer ordenO = null;
-        Integer ordenD = null;
+		if (candidatosOrigen.isEmpty()) {
+			dto.setMensaje("No hay paraderos cercanos al ORIGEN (máx. 500 metros).");
+			return ResponseEntity.ok(dto);
+		}
 
-        for (RutaParadero rp : lista) {
-            if (rp.getParadero().getId().equals(origen.getId())) ordenO = rp.getOrden();
-            if (rp.getParadero().getId().equals(destino.getId())) ordenD = rp.getOrden();
-        }
+		if (candidatosDestino.isEmpty()) {
+			dto.setMensaje("No hay paraderos cercanos al DESTINO (máx. 500 metros).");
+			return ResponseEntity.ok(dto);
+		}
 
-        // El destino debe estar más adelante en la ruta
-        if (ordenO == null || ordenD == null || ordenO >= ordenD) {
-            return null;
-        }
+		Long mejorRutaId = null;
+		int menorDistancia = Integer.MAX_VALUE;
+		String mejorSentido = null;
+		Paradero mejorParaderoOrigen = null;
+		Paradero mejorParaderoDestino = null;
 
-        ResultadoEvaluacion res = new ResultadoEvaluacion();
-        res.distancia = ordenD - ordenO;
-        res.sentido = (sentido == 1) ? "IDA" : "VUELTA";
-        return res;
-    }
+		for (Paradero pOrigen : candidatosOrigen) {
+			List<RutaParadero> rutasOrigen = rutaParaderoRepo.findByParaderoId(pOrigen.getId());
 
-    private double calcularDistanciaKm(double lat1, double lng1, double lat2, double lng2) {
-        double R = 6371.0;
-        double dLat = Math.toRadians(lat2 - lat1);
-        double dLng = Math.toRadians(lng2 - lng1);
+			for (Paradero pDestino : candidatosDestino) {
+				List<RutaParadero> rutasDestino = rutaParaderoRepo.findByParaderoId(pDestino.getId());
 
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+				for (RutaParadero r1 : rutasOrigen) {
+					for (RutaParadero r2 : rutasDestino) {
 
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+						if (!Objects.equals(r1.getRuta().getId(), r2.getRuta().getId()))
+							continue;
 
-        return R * c;
-    }
+						Long rutaId = r1.getRuta().getId();
 
-    // ---- Clase interna auxiliar ---
-    private static class ResultadoEvaluacion {
-        int distancia;
-        String sentido;
-    }
+						ResultadoEvaluacion res = evaluarSentidos(rutaId, pOrigen, pDestino);
 
-    private ParaderoDTO mapParadero(Paradero p) {
-        return ParaderoDTO.builder()
-                .id(p.getId())
-                .nombre(p.getNombre())
-                .lat(p.getLat())
-                .lng(p.getLng())
-                .build();
-    }
+						if (res != null && res.distancia < menorDistancia) {
+							menorDistancia = res.distancia;
+							mejorRutaId = rutaId;
+							mejorSentido = res.sentido;
+							mejorParaderoOrigen = pOrigen;
+							mejorParaderoDestino = pDestino;
+						}
+					}
+				}
+			}
+		}
 
-    private List<ParaderoDTO> mapRutaParaderos(Long rutaId, String sentido, Long origenId, Long destinoId, LocalTime horaInicio) {
+		if (mejorRutaId == null) {
+			dto.setMensaje("No existe un sentido válido para conectar origen y destino en una misma ruta.");
+			dto.setOrigen(mapParadero(candidatosOrigen.get(0)));
+			dto.setDestino(mapParadero(candidatosDestino.get(0)));
+			return ResponseEntity.ok(dto);
+		}
 
-        int sentidoInt = sentido.equals("IDA") ? 1 : 2;
+		Ruta mejorRuta = rutaRepo.findById(mejorRutaId).orElse(null);
 
-        List<RutaParadero> lista = rutaParaderoRepo
-                .findByRutaIdAndSentidoOrderByOrdenAsc(rutaId, sentidoInt);
+		dto.setRutaId(mejorRuta.getId());
+		dto.setRutaNombre(mejorRuta.getNombre());
+		dto.setSentido(mejorSentido);
+		dto.setDistanciaOrden(menorDistancia);
+		dto.setOrigen(mapParadero(mejorParaderoOrigen));
+		dto.setDestino(mapParadero(mejorParaderoDestino));
 
-        // Encontrar posiciones
-        int idxO = -1;
-        int idxD = -1;
+		LocalTime horaInicio = LocalTime.now();
 
-        for (int i = 0; i < lista.size(); i++) {
-            Long pid = lista.get(i).getParadero().getId();
-            if (pid.equals(origenId)) idxO = i;
-            if (pid.equals(destinoId)) idxD = i;
-        }
+		dto.setParaderosRuta(mapRutaParaderos(mejorRutaId, mejorSentido, mejorParaderoOrigen.getId(),
+				mejorParaderoDestino.getId(), horaInicio));
 
-        // Crear subtramo
-        if (idxO == -1 || idxD == -1 || idxO >= idxD) {
-            return Collections.emptyList();
-        }
+		dto.setMensaje("Ruta óptima encontrada.");
 
-        List<RutaParadero> subLista = lista.subList(idxO, idxD + 1);
+		return ResponseEntity.ok(dto);
+	}
 
-        List<ParaderoDTO> resultado = new ArrayList<>();
+	private List<Paradero> listarParaderosEnRango(double lat, double lng, double radioKm) {
 
-        for (int i = 0; i < subLista.size(); i++) {
+		List<Paradero> todos = paraderoRepo.findAll();
+		List<Paradero> resultado = new ArrayList<>();
 
-            Paradero p = subLista.get(i).getParadero();
+		for (Paradero p : todos) {
+			double distancia = calcularDistanciaKm(lat, lng, p.getLat().doubleValue(), p.getLng().doubleValue());
 
-            LocalTime horaParadero =
-            	    horaInicio.plusMinutes((i + 1) * MINUTOS_POR_PARADERO);
+			if (distancia <= radioKm) {
+				resultado.add(p);
+			}
+		}
 
-            ParaderoDTO dto = new ParaderoDTO(
-                    p.getId(),
-                    p.getNombre(),
-                    p.getLat(),
-                    p.getLng(),
-                    horaParadero.format(DateTimeFormatter.ofPattern("HH:mm"))
-            );
+		resultado.sort(Comparator.comparingDouble(
+				p -> calcularDistanciaKm(lat, lng, p.getLat().doubleValue(), p.getLng().doubleValue())));
 
-            resultado.add(dto);
-        }
+		return resultado;
+	}
 
-        return resultado;
+	private ResultadoEvaluacion evaluarSentidos(Long rutaId, Paradero origen, Paradero destino) {
 
-    }
+		ResultadoEvaluacion ida = evaluarSentido(rutaId, origen, destino, 1);
+		ResultadoEvaluacion retorno = evaluarSentido(rutaId, origen, destino, 2);
 
-    @Override
-    public MejorRutaResponseDTO calcularRutaConHorarios(Long rutaId, SentidoRuta sentido) {
+		if (ida == null)
+			return retorno;
+		if (retorno == null)
+			return ida;
 
-        Ruta ruta = rutaRepo.findById(rutaId)
-                .orElseThrow(() -> new RuntimeException("Ruta no encontrada"));
+		return (ida.distancia < retorno.distancia) ? ida : retorno;
+	}
 
-        String sentidoTexto = (sentido == SentidoRuta.IDA) ? "IDA" : "VUELTA";
+	private ResultadoEvaluacion evaluarSentido(Long rutaId, Paradero origen, Paradero destino, int sentido) {
 
-        List<ParaderoDTO> paraderos = mapRutaParaderos(
-                rutaId,
-                sentidoTexto,
-                null,
-                null,
-                null
-        );
+		List<RutaParadero> lista = rutaParaderoRepo.findByRutaIdAndSentidoOrderByOrdenAsc(rutaId, sentido);
 
-        // Hora base
-        LocalTime horaInicio = LocalTime.now().plusMinutes(4);
+		Integer ordenO = null;
+		Integer ordenD = null;
 
-        List<ParaderoDTO> paraderosConHora = new ArrayList<>();
+		for (RutaParadero rp : lista) {
+			if (rp.getParadero().getId().equals(origen.getId()))
+				ordenO = rp.getOrden();
+			if (rp.getParadero().getId().equals(destino.getId()))
+				ordenD = rp.getOrden();
+		}
 
-        for (int i = 0; i < paraderos.size(); i++) {
-            ParaderoDTO p = paraderos.get(i);
+		if (ordenO == null || ordenD == null || ordenO >= ordenD) {
+			return null;
+		}
 
-            LocalTime hora = horaInicio.plusMinutes(i * 4);
+		ResultadoEvaluacion res = new ResultadoEvaluacion();
+		res.distancia = ordenD - ordenO;
+		res.sentido = (sentido == 1) ? "IDA" : "VUELTA";
+		return res;
+	}
 
-            p.setHoraLlegadaAproximada(
-                hora.format(DateTimeFormatter.ofPattern("HH:mm"))
-            );
+	private double calcularDistanciaKm(double lat1, double lng1, double lat2, double lng2) {
 
-            paraderosConHora.add(p);
-        }
+		double R = 6371.0;
+		double dLat = Math.toRadians(lat2 - lat1);
+		double dLng = Math.toRadians(lng2 - lng1);
 
-        MejorRutaResponseDTO dto = new MejorRutaResponseDTO();
-        dto.setRutaId(ruta.getId());
-        dto.setRutaNombre(ruta.getNombre());
-        dto.setSentido(sentidoTexto);
-        dto.setParaderosRuta(paraderosConHora);
+		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(lat1))
+				* Math.cos(Math.toRadians(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
 
-        return dto;
-    }
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
+		return R * c;
+	}
 
-    public LocalDateTime calcularHoraLlegadaParadero(
-            Long rutaId,
-            Long paraderoId,
-            SentidoRuta sentido) {
+	private static class ResultadoEvaluacion {
+		int distancia;
+		String sentido;
+	}
 
-        String sentidoTexto = (sentido == SentidoRuta.IDA) ? "IDA" : "VUELTA";
+	private ParaderoDTO mapParadero(Paradero p) {
 
-        List<RutaParadero> lista = rutaParaderoRepo
-            .findByRutaIdAndSentidoOrderByOrdenAsc(
-                rutaId,
-                sentidoTexto.equals("IDA") ? 1 : 2
-            );
+		return ParaderoDTO.builder().id(p.getId()).nombre(p.getNombre()).lat(p.getLat()).lng(p.getLng()).build();
+	}
 
-        LocalTime horaInicio = LocalTime.now().plusMinutes(4);
+	private List<ParaderoDTO> mapRutaParaderos(Long rutaId, String sentido, Long origenId, Long destinoId,
+			LocalTime horaInicio) {
 
-        for (int i = 0; i < lista.size(); i++) {
-            RutaParadero rp = lista.get(i);
+		int sentidoInt = sentido.equals("IDA") ? 1 : 2;
 
-            if (rp.getParadero().getId().equals(paraderoId)) {
+		List<RutaParadero> lista = rutaParaderoRepo.findByRutaIdAndSentidoOrderByOrdenAsc(rutaId, sentidoInt);
 
-                LocalTime hora = horaInicio.plusMinutes((i + 1) * MINUTOS_POR_PARADERO);
+		int idxO = -1;
+		int idxD = -1;
 
-                LocalDateTime fechaHora = LocalDateTime.of(LocalDate.now(), hora);
+		for (int i = 0; i < lista.size(); i++) {
+			Long pid = lista.get(i).getParadero().getId();
+			if (origenId != null && pid.equals(origenId))
+				idxO = i;
+			if (destinoId != null && pid.equals(destinoId))
+				idxD = i;
+		}
 
-                if (fechaHora.isBefore(LocalDateTime.now())) {
-                    fechaHora = fechaHora.plusDays(1);
-                }
+		if (origenId != null && destinoId != null) {
+			if (idxO == -1 || idxD == -1 || idxO >= idxD) {
+				return Collections.emptyList();
+			}
+			lista = lista.subList(idxO, idxD + 1);
+		}
 
-                return fechaHora;
-            }
-        }
+		List<ParaderoDTO> resultado = new ArrayList<>();
 
-        return null;
-    }
-    
-    public ParaderoDTO obtenerParaderoDTO(Long rutaId, Long paraderoId, SentidoRuta sentido) {
+		for (int i = 0; i < lista.size(); i++) {
 
-        String sentidoTexto = (sentido == SentidoRuta.IDA) ? "IDA" : "VUELTA";
-        int sentidoInt = sentidoTexto.equals("IDA") ? 1 : 2;
+			Paradero p = lista.get(i).getParadero();
 
-        List<RutaParadero> lista = rutaParaderoRepo.findByRutaIdAndSentidoOrderByOrdenAsc(rutaId, sentidoInt);
+			LocalTime horaParadero = horaInicio != null ? horaInicio.plusMinutes((i + 1) * MINUTOS_POR_PARADERO) : null;
 
-        for (int i = 0; i < lista.size(); i++) {
-            if (lista.get(i).getParadero().getId().equals(paraderoId)) {
-                Paradero p = lista.get(i).getParadero();
-                // Calculamos la hora aproximada como en mapRutaParaderos
-                LocalTime horaLlegada = LocalTime.now().plusMinutes((i + 1) * MINUTOS_POR_PARADERO);
-                return new ParaderoDTO(
-                        p.getId(),
-                        p.getNombre(),
-                        p.getLat(),
-                        p.getLng(),
-                        horaLlegada.format(DateTimeFormatter.ofPattern("HH:mm"))
-                );
-            }
-        }
+			resultado.add(new ParaderoDTO(p.getId(), p.getNombre(), p.getLat(), p.getLng(),
+					horaParadero != null ? horaParadero.format(DateTimeFormatter.ofPattern("HH:mm")) : null));
+		}
 
-        return null; // no encontrado
-    }
+		return resultado;
+	}
 
+	@Override
+	public MejorRutaResponseDTO calcularRutaConHorarios(Long rutaId, SentidoRuta sentido) {
+
+		Ruta ruta = rutaRepo.findById(rutaId).orElseThrow(() -> new RuntimeException("Ruta no encontrada"));
+
+		String sentidoTexto = (sentido == SentidoRuta.IDA) ? "IDA" : "VUELTA";
+
+		List<ParaderoDTO> paraderos = mapRutaParaderos(rutaId, sentidoTexto, null, null, null);
+
+		LocalTime horaInicio = LocalTime.now().plusMinutes(4);
+
+		for (int i = 0; i < paraderos.size(); i++) {
+			ParaderoDTO p = paraderos.get(i);
+			LocalTime hora = horaInicio.plusMinutes(i * 4);
+			p.setHoraLlegadaAproximada(hora.format(DateTimeFormatter.ofPattern("HH:mm")));
+		}
+
+		MejorRutaResponseDTO dto = new MejorRutaResponseDTO();
+		dto.setRutaId(ruta.getId());
+		dto.setRutaNombre(ruta.getNombre());
+		dto.setSentido(sentidoTexto);
+		dto.setParaderosRuta(paraderos);
+
+		return dto;
+	}
+
+	public LocalDateTime calcularHoraLlegadaParadero(Long rutaId, Long paraderoId, SentidoRuta sentido) {
+
+		String sentidoTexto = (sentido == SentidoRuta.IDA) ? "IDA" : "VUELTA";
+
+		List<RutaParadero> lista = rutaParaderoRepo.findByRutaIdAndSentidoOrderByOrdenAsc(rutaId,
+				sentidoTexto.equals("IDA") ? 1 : 2);
+
+		LocalTime horaInicio = LocalTime.now().plusMinutes(4);
+
+		for (int i = 0; i < lista.size(); i++) {
+
+			RutaParadero rp = lista.get(i);
+
+			if (rp.getParadero().getId().equals(paraderoId)) {
+
+				LocalTime hora = horaInicio.plusMinutes((i + 1) * MINUTOS_POR_PARADERO);
+
+				LocalDateTime fechaHora = LocalDateTime.of(LocalDate.now(), hora);
+
+				if (fechaHora.isBefore(LocalDateTime.now())) {
+					fechaHora = fechaHora.plusDays(1);
+				}
+
+				return fechaHora;
+			}
+		}
+
+		return null;
+	}
+
+	public ParaderoDTO obtenerParaderoDTO(Long rutaId, Long paraderoId, SentidoRuta sentido) {
+
+		String sentidoTexto = (sentido == SentidoRuta.IDA) ? "IDA" : "VUELTA";
+		int sentidoInt = sentidoTexto.equals("IDA") ? 1 : 2;
+
+		List<RutaParadero> lista = rutaParaderoRepo.findByRutaIdAndSentidoOrderByOrdenAsc(rutaId, sentidoInt);
+
+		for (int i = 0; i < lista.size(); i++) {
+
+			if (lista.get(i).getParadero().getId().equals(paraderoId)) {
+
+				Paradero p = lista.get(i).getParadero();
+
+				LocalTime horaLlegada = LocalTime.now().plusMinutes((i + 1) * MINUTOS_POR_PARADERO);
+
+				return new ParaderoDTO(p.getId(), p.getNombre(), p.getLat(), p.getLng(),
+						horaLlegada.format(DateTimeFormatter.ofPattern("HH:mm")));
+			}
+		}
+
+		return null;
+	}
 }

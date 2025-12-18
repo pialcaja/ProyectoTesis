@@ -36,89 +36,67 @@ public class AlertaNotificacionServiceImpl implements AlertaNotificacionService 
 	@Override
 	public void procesarAlertasPendientes() {
 
-	    List<AlertaNotificacion> alertas =
-	            alertaRepository.findByEstado(EstadoAlerta.PENDIENTE);
+		List<AlertaNotificacion> alertas = alertaRepository.findByEstado(EstadoAlerta.PENDIENTE);
 
-	    LocalDateTime ahora = LocalDateTime.now();
+		LocalDateTime ahora = LocalDateTime.now();
 
-	    for (AlertaNotificacion alerta : alertas) {
+		for (AlertaNotificacion alerta : alertas) {
 
-	        System.out.println("---- ALERTA " + alerta.getId());
-	        System.out.println("Ahora:      " + ahora);
-	        System.out.println("FechaEnvio: " + alerta.getFechaEnvio());
-	        System.out.println("Llegada:    " + alerta.getFechaHoraLlegada());
+			if (ahora.isBefore(alerta.getFechaEnvio())) {
+				continue;
+			}
 
-	        if (ahora.isBefore(alerta.getFechaEnvio())) {
-	            System.out.println("⏳ Aún no es hora de notificar");
-	            continue;
-	        }
-
-	        dispararNotificacion(alerta);
-	        alerta.setEstado(EstadoAlerta.ENVIADA);
-	        alertaRepository.save(alerta);
-
-	        System.out.println("✅ ALERTA ENVIADA ID=" + alerta.getId());
-	    }
+			dispararNotificacion(alerta);
+			alerta.setEstado(EstadoAlerta.ENVIADA);
+			alertaRepository.save(alerta);
+		}
 	}
 
 	private void dispararNotificacion(AlertaNotificacion alerta) {
-	    // enviar websocket / push / toast
-	    System.out.println("🔔 Notificando alerta " + alerta.getId());
+		// enviar websocket / push / toast
 	}
 
 	@Override
 	public AlertaResponseDTO crearAlerta(AlertaRequestDTO request) {
 
-	    System.out.println("🚨 ===== CREANDO ALERTA =====");
-	    System.out.println("🕒 Hora actual servidor: " + LocalDateTime.now());
+		Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	    Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
-	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		Ruta ruta = rutaRepository.findById(request.getRutaId())
+				.orElseThrow(() -> new RuntimeException("Ruta no encontrada"));
 
-	    Ruta ruta = rutaRepository.findById(request.getRutaId())
-	            .orElseThrow(() -> new RuntimeException("Ruta no encontrada"));
+		Paradero paradero = paraderoRepository.findById(request.getParaderoId())
+				.orElseThrow(() -> new RuntimeException("Paradero no encontrado"));
 
-	    Paradero paradero = paraderoRepository.findById(request.getParaderoId())
-	            .orElseThrow(() -> new RuntimeException("Paradero no encontrado"));
+		if (request.getHoraLlegadaAproximada() == null) {
+			throw new RuntimeException("Debe enviarse la hora aproximada de llegada desde el frontend");
+		}
 
-	    // --- Usar hora enviada desde el frontend ---
-	    if (request.getHoraLlegadaAproximada() == null) {
-	        throw new RuntimeException("Debe enviarse la hora aproximada de llegada desde el frontend");
-	    }
+		LocalTime horaLlegada = LocalTime.parse(request.getHoraLlegadaAproximada(),
+				DateTimeFormatter.ofPattern("HH:mm"));
 
-	    LocalTime horaLlegada = LocalTime.parse(
-	            request.getHoraLlegadaAproximada(),
-	            DateTimeFormatter.ofPattern("HH:mm")
-	    );
+		LocalDateTime fechaHoraLlegada = LocalDateTime.of(LocalDate.now(), horaLlegada);
 
-	    LocalDateTime fechaHoraLlegada = LocalDateTime.of(LocalDate.now(), horaLlegada);
+		if (fechaHoraLlegada.isBefore(LocalDateTime.now())) {
+			fechaHoraLlegada = fechaHoraLlegada.plusDays(1);
+		}
 
-	    if (fechaHoraLlegada.isBefore(LocalDateTime.now())) {
-	        fechaHoraLlegada = fechaHoraLlegada.plusDays(1);
-	    }
+		LocalDateTime fechaEnvio = fechaHoraLlegada.minusMinutes(request.getMinutosAntes());
 
-	    LocalDateTime fechaEnvio = fechaHoraLlegada.minusMinutes(request.getMinutosAntes());
+		AlertaNotificacion alerta = new AlertaNotificacion();
+		alerta.setUsuario(usuario);
+		alerta.setRuta(ruta);
+		alerta.setParadero(paradero);
+		alerta.setSentido(request.getSentido());
+		alerta.setMinutosAntes(request.getMinutosAntes());
+		alerta.setCanalNotificacion(CanalNotificacion.WEB);
+		alerta.setFechaHoraLlegada(fechaHoraLlegada);
+		alerta.setFechaEnvio(fechaEnvio);
+		alerta.setEstado(EstadoAlerta.PENDIENTE);
 
-	    System.out.println("🚌 Hora llegada calculada: " + fechaHoraLlegada);
-	    System.out.println("⏰ Fecha envío calculada (llegada - minutosAntes): " + fechaEnvio);
+		alertaRepository.save(alerta);
 
-	    AlertaNotificacion alerta = new AlertaNotificacion();
-	    alerta.setUsuario(usuario);
-	    alerta.setRuta(ruta);
-	    alerta.setParadero(paradero);
-	    alerta.setSentido(request.getSentido());
-	    alerta.setMinutosAntes(request.getMinutosAntes());
-	    alerta.setCanalNotificacion(CanalNotificacion.WEB);
-	    alerta.setFechaHoraLlegada(fechaHoraLlegada);
-	    alerta.setFechaEnvio(fechaEnvio);
-	    alerta.setEstado(EstadoAlerta.PENDIENTE);
-
-	    alertaRepository.save(alerta);
-
-	    System.out.println("💾 Alerta guardada en BD con ID: " + alerta.getId());
-	    System.out.println("🚨 ===========================");
-
-	    return mapToResponse(alerta);
+		return mapToResponse(alerta);
 	}
 
 	@Override
@@ -139,7 +117,7 @@ public class AlertaNotificacionServiceImpl implements AlertaNotificacionService 
 
 		alertaRepository.save(alerta);
 	}
-	
+
 	@Override
 	public List<AlertaResponseDTO> listarAlertasPorUsuario(Long usuarioId) {
 
@@ -154,6 +132,7 @@ public class AlertaNotificacionServiceImpl implements AlertaNotificacionService 
 
 	@Override
 	public List<AlertaResponseDTO> listarAlertasPendientesPorUsuario(Long usuarioId) {
+
 		return alertaRepository.findByUsuarioIdAndEstado(usuarioId, EstadoAlerta.PENDIENTE).stream()
 				.map(this::mapToResponse).toList();
 	}
@@ -164,11 +143,6 @@ public class AlertaNotificacionServiceImpl implements AlertaNotificacionService 
 		AlertaNotificacion alerta = alertaRepository.findById(alertaId)
 				.orElseThrow(() -> new RuntimeException("Alerta no encontrada"));
 
-//		if (alerta.getEstado() == EstadoAlerta.ENVIADA) {
-//			throw new IllegalStateException("No se puede eliminar una alerta enviada");
-//		}
-
 		alertaRepository.delete(alerta);
 	}
-
 }

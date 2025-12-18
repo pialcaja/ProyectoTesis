@@ -9,7 +9,7 @@ export class GeocodingService {
 
   private apiKey = 'AIzaSyBWdkrFQPP7uApLAj1NqEkaoEQT3Cp-4-8';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   geocodeAddress(address: string): Observable<{ lat: number, lng: number }> {
     const url =
