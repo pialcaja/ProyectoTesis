@@ -55,6 +55,7 @@ export class BusquedaRutaComponent implements AfterViewInit {
 
   private directionsService?: google.maps.DirectionsService;
   private directionsRenderer?: google.maps.DirectionsRenderer;
+  private directionsRenderers: google.maps.DirectionsRenderer[] = [];
 
   private markers: google.maps.marker.AdvancedMarkerElement[] = [];
   private markerUbicacionActual?: google.maps.marker.AdvancedMarkerElement;
@@ -193,69 +194,71 @@ export class BusquedaRutaComponent implements AfterViewInit {
   }
 
   private drawRoute(ruta?: MejorRutaResponseDTO) {
-    if (!this.map || !this.directionsService) return;
-    if (!ruta?.paraderosRuta?.length) return;
+    if (!this.map || !ruta?.paraderosRuta?.length) return;
 
     this.clearMap();
 
-    const paraderos = ruta.paraderosRuta;
-    const MAX_WAYPOINTS = 25;
+    const path = ruta.paraderosRuta.map(p => ({
+      lat: p.lat,
+      lng: p.lng
+    }));
 
-    const paraderoInicio = { lat: paraderos[0].lat, lng: paraderos[0].lng };
-    const paraderoFin = { lat: paraderos[paraderos.length - 1].lat, lng: paraderos[paraderos.length - 1].lng };
+    // markers inicio / fin
+    const inicio = path[0];
+    const fin = path[path.length - 1];
 
     this.markers.push(
-      new google.maps.marker.AdvancedMarkerElement({ position: paraderoInicio, map: this.map, title: 'Paradero Inicial' }),
-      new google.maps.marker.AdvancedMarkerElement({ position: paraderoFin, map: this.map, title: 'Paradero Final' })
+      new google.maps.marker.AdvancedMarkerElement({
+        position: inicio,
+        map: this.map,
+        title: 'Paradero Inicial'
+      }),
+      new google.maps.marker.AdvancedMarkerElement({
+        position: fin,
+        map: this.map,
+        title: 'Paradero Final'
+      })
     );
 
-    const slices: ParaderoDTO[][] = [];
-    let start = 0;
-    while (start < paraderos.length - 1) {
-      const end = Math.min(start + MAX_WAYPOINTS + 1, paraderos.length);
-      slices.push(paraderos.slice(start, end));
-      start = end - 1;
-    }
-
-    slices.forEach(segment => {
-      if (segment.length < 2) return;
-
-      const origin = { lat: segment[0].lat, lng: segment[0].lng };
-      const destination = { lat: segment[segment.length - 1].lat, lng: segment[segment.length - 1].lng };
-
-      const waypoints = segment.slice(1, -1).map(p => ({
-        location: { lat: p.lat, lng: p.lng },
-        stopover: true
-      }));
-
-      const renderer = new google.maps.DirectionsRenderer({
-        map: this.map,
-        suppressMarkers: true,
-        polylineOptions: { strokeColor: '#FF0000', strokeWeight: 4 }
-      });
-
-      this.directionsService!.route(
-        {
-          origin,
-          destination,
-          waypoints,
-          travelMode: google.maps.TravelMode.DRIVING
-        },
-        (result, status) => {
-          if (status === google.maps.DirectionsStatus.OK && result) {
-            renderer.setDirections(result);
-            this.markers.push(renderer as any);
-          }
-        }
-      );
+    this.polyline = new google.maps.Polyline({
+      path,
+      geodesic: true,
+      strokeColor: '#FF0000',
+      strokeOpacity: 1,
+      strokeWeight: 4,
+      map: this.map
     });
+
+    // ajustar vista
+    const bounds = new google.maps.LatLngBounds();
+    path.forEach(p => bounds.extend(p));
+    this.map.fitBounds(bounds);
+  }
+
+  private drawPolyline(path: google.maps.LatLng[]) {
+    if (!this.map) return;
+
+    if (!this.polyline) {
+      this.polyline = new google.maps.Polyline({
+        path,
+        geodesic: true,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1,
+        strokeWeight: 4,
+        map: this.map
+      });
+    } else {
+      this.polyline.setPath(path);
+    }
   }
 
   private clearMap() {
     this.markers.forEach(m => m.map = null);
     this.markers = [];
-    if (this.directionsRenderer) {
-      this.directionsRenderer.setDirections({ routes: [] } as any);
+
+    if (this.polyline) {
+      this.polyline.setMap(null);
+      this.polyline = undefined;
     }
   }
 

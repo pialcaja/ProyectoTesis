@@ -153,17 +153,23 @@ insert into tb_ruta (nombre, estado, id_linea) values
 insert into tb_paradero (nombre, lat, lng, estado, sentido) values
 ('24 de Junio', -12.016510423140467, -77.02980180840994, 1, 1),
 ('Suarez', -12.017079708034746, -77.030951134936, 1, 1),
+('Intermedio Ferreyros', -12.017329627605104, -77.031161996319, 1, 1),
+('Intermedio Amancaes 1', -12.020120982016454, -77.02864610917625, 1, 1),
 ('Carlos Valderrama', -12.020923662169666, -77.02953700772312, 1, 1),
 ('Calle 1', -12.022726949912393, -77.03114099407242, 1, 1),
+('Intermedio Amancaes 2', -12.023780301854043, -77.03194256448903, 1, 1),
 ('Amancaes', -12.026066101424014, -77.03411613905509, 1, 1),
+('Intermedio Alcazar', -12.02627997831535, -77.03426913582915, 1, 1),
 ('La Colonia', -12.027845982006186, -77.03255032368416, 1, 1),
 ('Madrid', -12.029200444345403, -77.03099989309139, 1, 1),
+('Intermedio prol. Tacna', -12.03199308940792, -77.02793904213124, 1, 1),
 ('Leoncio Prado', -12.032565977734537, -77.02846309290642, 1, 1),
 ('Guardia Republicana', -12.03451237361796, -77.02972775296392, 1, 1),
-('Chira', -12.03643399537565, -77.03090216261164, 1, 1),
-('Virú', -12.039514341514083, -77.03298365633778, 1, 1),
+('Chira', -12.038931257046956, -77.03244383926986, 1, 1),
+('Virú', -12.044133835256618, -77.03601480408405, 1, 1),
 ('Ica', -12.044084618701946, -77.03611843963323, 1, 1),
 ('Moquegua', -12.046933477427553, -77.03798045675171, 1, 1),
+('Intermedio Garcilaso', -12.04864295482881, -77.03912121288147, 1, 1),
 ('Ilo', -12.051859851214468, -77.0387670785748, 1, 1),
 ('Bolivia', -12.05551200513474, -77.03837201162554, 1, 1),
 ('España', -12.05750030361762, -77.03820736236946, 1, 1),
@@ -186,15 +192,29 @@ insert into tb_paradero (nombre, lat, lng, estado, sentido) values
 ('Angamos', -12.113399425219196, -77.03002493747817, 1, 1),
 ('Piura', -12.115620620347183, -77.02964713165767, 1, 1),
 ('Pardo', -12.118595477059465, -77.02917281625257, 1, 1),
+('Intermedio Diagonal', -12.119595823827298, -77.02925652889014, 1, 1),
 ('Berlín', -12.12217337013307, -77.03117312099421, 1, 1),
+('Intermedio Malecon', -12.12357739945747, -77.03227840100303, 1, 1),
 ('28 de Julio', -12.125180766756667, -77.03300039021873, 1, 1),
+('Intermedio Malecon 2', -12.125401418714736, -77.03308894125419, 1, 1),
+('Intermedio 28', -12.126383547711738, -77.03072138206237, 1, 1),
 ('Larco', -12.126863940923183, -77.02979033440344, 1, 1),
+('Intermedio Larco', -12.12691358287979, -77.02959543740626, 1, 1),
 ('Armendáriz', -12.13125023299553, -77.03002757366325, 1, 1),
+('Intermedio Armendáriz', -12.131527501280408, -77.03001002440469, 1, 1),
 ('Loyola', -12.133849282247015, -77.02704028839749, 1, 1),
 ('La Paz', -12.135152554645302, -77.02542442419998, 1, 1),
+('Intermedio Armendáriz 2', -12.13526829918501, -77.02499813392794, 1, 1),
+('Intermedio Armendáriz 3', -12.134843189172255, -77.02357254744291, 1, 1),
+('Intermedio Armendáriz 4', -12.135246211104409, -77.02308839201933, 1, 1),
+('Intermedio Armendáriz 5', -12.136059716673648, -77.02282329977227, 1, 1),
 ('El Sol', -12.137660520835082, -77.022611950875, 1, 1),
 ('Centenario', -12.14079825498939, -77.0223088822953, 1, 1),
+('Intermedio Piérola', -12.141138028808209, -77.02226020864319, 1, 1),
 ('Balta', -12.141857720012606, -77.0185536634698, 1, 1),
+('Intermedio Balta', -12.141953125128754, -77.01762578505871, 1, 1),
+('Intermedio Balta 2', -12.14318284076086, -77.01612883982534, 1, 1),
+('Intermedio Balta 3', -12.143321817039459, -77.01625490365973, 1, 1),
 ('Plaza Butters', -12.143751344343038, -77.01584009149282, 1, 1);
 
 -- PARADEROS - SENTIDO VUELTA (BARRANCO → RÍMAC)
@@ -246,6 +266,7 @@ insert into tb_paradero (nombre, lat, lng, estado, sentido) values
 -- RUTA 301 - SENTIDO IDA (1)
 -- =========================================
 INSERT INTO tb_ruta_paradero (id_ruta, id_paradero, orden, sentido) VALUES
+
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
  (SELECT id FROM tb_paradero WHERE nombre='24 de Junio' AND sentido=1), 1, 1),
 
@@ -253,133 +274,193 @@ INSERT INTO tb_ruta_paradero (id_ruta, id_paradero, orden, sentido) VALUES
  (SELECT id FROM tb_paradero WHERE nombre='Suarez' AND sentido=1), 2, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Carlos Valderrama' AND sentido=1), 3, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Ferreyros' AND sentido=1), 3, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Calle 1' AND sentido=1), 4, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Amancaes 1' AND sentido=1), 4, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Amancaes' AND sentido=1), 5, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Carlos Valderrama' AND sentido=1), 5, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='La Colonia' AND sentido=1), 6, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Calle 1' AND sentido=1), 6, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Madrid' AND sentido=1), 7, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Amancaes 2' AND sentido=1), 7, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Leoncio Prado' AND sentido=1), 8, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Amancaes' AND sentido=1), 8, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Guardia Republicana' AND sentido=1), 9, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Alcazar' AND sentido=1), 9, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Chira' AND sentido=1), 10, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='La Colonia' AND sentido=1), 10, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Virú' AND sentido=1), 11, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Madrid' AND sentido=1), 11, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Ica' AND sentido=1), 12, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio prol. Tacna' AND sentido=1), 12, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Moquegua' AND sentido=1), 13, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Leoncio Prado' AND sentido=1), 13, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Ilo' AND sentido=1), 14, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Guardia Republicana' AND sentido=1), 14, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Bolivia' AND sentido=1), 15, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Chira' AND sentido=1), 15, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='España' AND sentido=1), 16, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Virú' AND sentido=1), 16, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Tarma' AND sentido=1), 17, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Ica' AND sentido=1), 17, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Saco Oliveros' AND sentido=1), 18, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Moquegua' AND sentido=1), 18, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Ramón Dagnino' AND sentido=1), 19, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Garcilaso' AND sentido=1), 19, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Cuba' AND sentido=1), 20, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Ilo' AND sentido=1), 20, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Enrique Villar' AND sentido=1), 21, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Bolivia' AND sentido=1), 21, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Manuel Segura' AND sentido=1), 22, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='España' AND sentido=1), 22, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Manuel Candamo' AND sentido=1), 23, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Tarma' AND sentido=1), 23, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Tomás Guido' AND sentido=1), 24, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Saco Oliveros' AND sentido=1), 24, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Soledad' AND sentido=1), 25, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Ramón Dagnino' AND sentido=1), 25, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Manuel Bañon' AND sentido=1), 26, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Cuba' AND sentido=1), 26, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Paz Soldán' AND sentido=1), 27, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Enrique Villar' AND sentido=1), 27, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Choquehuanca' AND sentido=1), 28, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Manuel Segura' AND sentido=1), 28, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Raymundo Morales' AND sentido=1), 29, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Manuel Candamo' AND sentido=1), 29, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Los Ángeles' AND sentido=1), 30, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Tomás Guido' AND sentido=1), 30, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Andalucía' AND sentido=1), 31, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Soledad' AND sentido=1), 31, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Ayacucho' AND sentido=1), 32, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Manuel Bañon' AND sentido=1), 32, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Angamos' AND sentido=1), 33, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Paz Soldán' AND sentido=1), 33, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Piura' AND sentido=1), 34, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Choquehuanca' AND sentido=1), 34, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Pardo' AND sentido=1), 35, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Raymundo Morales' AND sentido=1), 35, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Berlín' AND sentido=1), 36, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Los Ángeles' AND sentido=1), 36, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='28 de Julio' AND sentido=1), 37, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Andalucía' AND sentido=1), 37, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Larco' AND sentido=1), 38, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Ayacucho' AND sentido=1), 38, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Armendáriz' AND sentido=1), 39, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Angamos' AND sentido=1), 39, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Loyola' AND sentido=1), 40, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Piura' AND sentido=1), 40, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='La Paz' AND sentido=1), 41, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Pardo' AND sentido=1), 41, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='El Sol' AND sentido=1), 42, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Diagonal' AND sentido=1), 42, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Centenario' AND sentido=1), 43, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Berlín' AND sentido=1), 43, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Balta' AND sentido=1), 44, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Malecon' AND sentido=1), 44, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='Plaza Butters' AND sentido=1), 45, 1);
+ (SELECT id FROM tb_paradero WHERE nombre='28 de Julio' AND sentido=1), 45, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Malecon 2' AND sentido=1), 46, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio 28' AND sentido=1), 47, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Larco' AND sentido=1), 48, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Larco' AND sentido=1), 49, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Armendáriz' AND sentido=1), 50, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Armendáriz' AND sentido=1), 51, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Loyola' AND sentido=1), 52, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='La Paz' AND sentido=1), 53, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Armendáriz 2' AND sentido=1), 54, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Armendáriz 3' AND sentido=1), 55, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Armendáriz 4' AND sentido=1), 56, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Armendáriz 5' AND sentido=1), 57, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='El Sol' AND sentido=1), 58, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Centenario' AND sentido=1), 59, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Piérola' AND sentido=1), 60, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Balta' AND sentido=1), 61, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Balta' AND sentido=1), 62, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Balta 2' AND sentido=1), 63, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Intermedio Balta 3' AND sentido=1), 64, 1),
+
+((SELECT id FROM tb_ruta WHERE nombre='301'),
+ (SELECT id FROM tb_paradero WHERE nombre='Plaza Butters' AND sentido=1), 65, 1);
 
 -- =========================================
 -- RUTA 301 - SENTIDO VUELTA (2)
