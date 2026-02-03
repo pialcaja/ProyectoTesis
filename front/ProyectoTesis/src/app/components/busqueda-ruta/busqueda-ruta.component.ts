@@ -39,7 +39,7 @@ export class BusquedaRutaComponent implements AfterViewInit {
   usandoUbicacionActual = false;
   ubicacionActualCoords?: { lat: number; lng: number };
 
-  @ViewChild('mapContainer', { static: false })
+  @ViewChild('mapContainer')
   mapContainer!: ElementRef<HTMLDivElement>;
 
   @ViewChild('origenInput')
@@ -54,12 +54,11 @@ export class BusquedaRutaComponent implements AfterViewInit {
   private autocompleteDestino?: google.maps.places.Autocomplete;
 
   private directionsService?: google.maps.DirectionsService;
-  private directionsRenderer?: google.maps.DirectionsRenderer;
 
   private markers: google.maps.marker.AdvancedMarkerElement[] = [];
   private markerUbicacionActual?: google.maps.marker.AdvancedMarkerElement;
 
-  private polyline?: google.maps.Polyline;
+  private routeRenderers: google.maps.DirectionsRenderer[] = [];
 
   private apiKey = 'AIzaSyBWdkrFQPP7uApLAj1NqEkaoEQT3Cp-4-8';
 
@@ -67,7 +66,6 @@ export class BusquedaRutaComponent implements AfterViewInit {
     private busquedaService: BusquedaRutaService,
     private authService: AuthService,
     private mapLoader: MapLoaderService,
-    private geocodingService: GeocodingService,
     private cdr: ChangeDetectorRef,
     private alertaService: AlertaNotificacionService
   ) { }
@@ -88,26 +86,17 @@ export class BusquedaRutaComponent implements AfterViewInit {
       mapId: '8c9e07024846a3a91b05df16'
     });
 
-    this.autocompleteOrigen = new google.maps.places.Autocomplete(this.origenInput.nativeElement, {
-      fields: ['geometry', 'name'],
-      strictBounds: false
-    });
+    this.autocompleteOrigen = new google.maps.places.Autocomplete(
+      this.origenInput.nativeElement,
+      { fields: ['geometry', 'name'] }
+    );
 
-    this.autocompleteDestino = new google.maps.places.Autocomplete(this.destinoInput.nativeElement, {
-      fields: ['geometry', 'name'],
-      strictBounds: false
-    });
+    this.autocompleteDestino = new google.maps.places.Autocomplete(
+      this.destinoInput.nativeElement,
+      { fields: ['geometry', 'name'] }
+    );
 
     this.directionsService = new google.maps.DirectionsService();
-
-    this.directionsRenderer = new google.maps.DirectionsRenderer({
-      map: this.map,
-      suppressMarkers: true,
-      polylineOptions: {
-        strokeColor: '#FF0000',
-        strokeWeight: 4
-      }
-    });
   }
 
   async buscar() {
@@ -231,8 +220,13 @@ export class BusquedaRutaComponent implements AfterViewInit {
       const renderer = new google.maps.DirectionsRenderer({
         map: this.map,
         suppressMarkers: true,
-        polylineOptions: { strokeColor: '#FF0000', strokeWeight: 4 }
+        polylineOptions: {
+          strokeColor: '#FF0000',
+          strokeWeight: 4
+        }
       });
+
+      this.routeRenderers.push(renderer);
 
       this.directionsService!.route(
         {
@@ -254,9 +248,9 @@ export class BusquedaRutaComponent implements AfterViewInit {
   private clearMap() {
     this.markers.forEach(m => m.map = null);
     this.markers = [];
-    if (this.directionsRenderer) {
-      this.directionsRenderer.setDirections({ routes: [] } as any);
-    }
+
+    this.routeRenderers.forEach(r => r.setMap(null));
+    this.routeRenderers = [];
   }
 
   usarUbicacionActual() {

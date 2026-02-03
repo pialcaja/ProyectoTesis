@@ -503,7 +503,7 @@ INSERT INTO tb_ruta_paradero (id_ruta, id_paradero, orden, sentido) VALUES
  (SELECT id FROM tb_paradero WHERE nombre='Calle 3' AND sentido=2), 39, 2),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='El Sol' AND sentido=2), 40, 2),
+ (SELECT id FROM tb_paradero WHERE nombre='Carlos Valderrama' AND sentido=2), 40, 2),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
  (SELECT id FROM tb_paradero WHERE nombre='Calle 10' AND sentido=2), 41, 2),
