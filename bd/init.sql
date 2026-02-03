@@ -192,7 +192,7 @@ insert into tb_paradero (nombre, lat, lng, estado, sentido) values
 ('Armendáriz', -12.13125023299553, -77.03002757366325, 1, 1),
 ('Loyola', -12.133849282247015, -77.02704028839749, 1, 1),
 ('La Paz', -12.135152554645302, -77.02542442419998, 1, 1),
-('El Sol B', -12.137660520835082, -77.022611950875, 1, 1),
+('El Sol', -12.137660520835082, -77.022611950875, 1, 1),
 ('Centenario', -12.14079825498939, -77.0223088822953, 1, 1),
 ('Balta', -12.141857720012606, -77.0185536634698, 1, 1),
 ('Plaza Butters', -12.143751344343038, -77.01584009149282, 1, 1);
@@ -370,7 +370,7 @@ INSERT INTO tb_ruta_paradero (id_ruta, id_paradero, orden, sentido) VALUES
  (SELECT id FROM tb_paradero WHERE nombre='La Paz' AND sentido=1), 41, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='El Sol B' AND sentido=1), 42, 1),
+ (SELECT id FROM tb_paradero WHERE nombre='El Sol' AND sentido=1), 42, 1),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
  (SELECT id FROM tb_paradero WHERE nombre='Centenario' AND sentido=1), 43, 1),
@@ -503,7 +503,7 @@ INSERT INTO tb_ruta_paradero (id_ruta, id_paradero, orden, sentido) VALUES
  (SELECT id FROM tb_paradero WHERE nombre='Calle 3' AND sentido=2), 39, 2),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
- (SELECT id FROM tb_paradero WHERE nombre='El Sol B' AND sentido=2), 40, 2),
+ (SELECT id FROM tb_paradero WHERE nombre='Carlos Valderrama' AND sentido=2), 40, 2),
 
 ((SELECT id FROM tb_ruta WHERE nombre='301'),
  (SELECT id FROM tb_paradero WHERE nombre='Calle 10' AND sentido=2), 41, 2),
