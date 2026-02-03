@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { BusquedaRutaService } from '../../services/busqueda-ruta.service';
 import { MapLoaderService } from '../../services/map-loader.service';
 import { MejorRutaResponseDTO, ParaderoDTO } from '../../models/mejor-ruta-response.dto';
-import { GeocodingService } from '../../services/geocoding.service';
 import { AuthService } from '../../services/auth.service';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { AlertaNotificacionService, CrearAlertaRequest } from '../../services/alerta-notificacion.service';
