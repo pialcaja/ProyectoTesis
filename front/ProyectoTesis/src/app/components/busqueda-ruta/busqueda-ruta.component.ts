@@ -59,6 +59,8 @@ export class BusquedaRutaComponent implements AfterViewInit {
   private markers: google.maps.marker.AdvancedMarkerElement[] = [];
   private markerUbicacionActual?: google.maps.marker.AdvancedMarkerElement;
 
+  private routeRenderers: google.maps.DirectionsRenderer[] = [];
+
   private polyline?: google.maps.Polyline;
 
   private apiKey = 'AIzaSyBWdkrFQPP7uApLAj1NqEkaoEQT3Cp-4-8';
@@ -231,8 +233,13 @@ export class BusquedaRutaComponent implements AfterViewInit {
       const renderer = new google.maps.DirectionsRenderer({
         map: this.map,
         suppressMarkers: true,
-        polylineOptions: { strokeColor: '#FF0000', strokeWeight: 4 }
+        polylineOptions: {
+          strokeColor: '#FF0000',
+          strokeWeight: 4
+        }
       });
+
+      this.routeRenderers.push(renderer);
 
       this.directionsService!.route(
         {
@@ -254,9 +261,9 @@ export class BusquedaRutaComponent implements AfterViewInit {
   private clearMap() {
     this.markers.forEach(m => m.map = null);
     this.markers = [];
-    if (this.directionsRenderer) {
-      this.directionsRenderer.setDirections({ routes: [] } as any);
-    }
+
+    this.routeRenderers.forEach(r => r.setMap(null));
+    this.routeRenderers = [];
   }
 
   usarUbicacionActual() {
